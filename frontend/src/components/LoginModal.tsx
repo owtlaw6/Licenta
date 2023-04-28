@@ -16,11 +16,14 @@ interface LoginModalProps {
 const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
 
     const [errorText, setErrorText] = useState<string | null>(null);
+    const [selectedRole, setSelectedRole] = useState<string>("");
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginCredentials>();
 
     async function onSubmit(credentials: LoginCredentials) {
         try {
+            credentials.role = selectedRole;
+            
             const user = await NotesApi.login(credentials);
             onLoginSuccessful(user);
         } catch (error) {
@@ -32,6 +35,10 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
             console.error(error);
         }
     }
+
+    const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedRole(e.target.value);
+    };
 
     return (
         <Modal show onHide={onDismiss}>
@@ -66,6 +73,33 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
                         registerOptions={{ required: "Required" }}
                         error={errors.password}
                     />
+                    <input
+                        type="radio"
+                        id="doctor"
+                        value="Doctor"
+                        name="role"
+                        checked={selectedRole === "Doctor"}
+                        onChange={handleRoleChange}
+                    />
+                    <label htmlFor="doctor">Doctor</label>
+                    <input
+                        type="radio"
+                        id="technician"
+                        value="Technician"
+                        name="role"
+                        checked={selectedRole === "Technician"}
+                        onChange={handleRoleChange}
+                    />
+                    <label htmlFor="technician">Technician</label>
+                    <input
+                        type="radio"
+                        id="admin"
+                        value="Admin"
+                        name="role"
+                        checked={selectedRole === "Admin"}
+                        onChange={handleRoleChange}
+                    />
+                    <label htmlFor="admin">Admin</label>
                     <Button
                         type="submit"
                         disabled={isSubmitting}

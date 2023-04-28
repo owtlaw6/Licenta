@@ -16,16 +16,22 @@ interface SignUpBody {
     username?: string,
     email?: string,
     password?: string,
+    role?: string,
 }
 
 export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = async (req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
     const passwordRaw = req.body.password;
+    const role = req.body.role;
 
     try {
         if (!username || !email || !passwordRaw) {
             throw createHttpError(400, "Parameters missing");
+        }
+
+        if (!role) {
+            throw createHttpError(400, "Role missing " + req.body.role);
         }
 
         const existingUsername = await UserModel.findOne({ username: username }).exec();
@@ -46,6 +52,7 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
             username: username,
             email: email,
             password: passwordHashed,
+            role: role,
         });
 
         req.session.userId = newUser._id;
@@ -59,18 +66,24 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
 interface LoginBody {
     username?: string,
     password?: string,
+    role?: string,
 }
 
 export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
+    const role = req.body.role;
 
     try {
         if (!username || !password) {
             throw createHttpError(400, "Parameters missing");
         }
 
-        const user = await UserModel.findOne({ username: username }).select("+password +email").exec();
+        if (!role) {
+            throw createHttpError(400, "Role missing");
+        }
+
+        const user = await UserModel.findOne({ username: username }).select("+password +email +role").exec();
 
         if (!user) {
             throw createHttpError(401, "Invalid credentials");
@@ -80,6 +93,10 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async
 
         if (!passwordMatch) {
             throw createHttpError(401, "Invalid credentials");
+        }
+
+        if (role != user.role) {
+            throw createHttpError(401, "Wrong role");
         }
 
         req.session.userId = user._id;

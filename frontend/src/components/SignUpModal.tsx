@@ -2,9 +2,10 @@ import { useForm } from "react-hook-form";
 import { User } from "../models/user";
 import { SignUpCredentials } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Form, Modal, Row } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
 import styleUtils from "../styles/utils.module.css";
+import styleButtons from "../styles/signUpButtons.module.css";
 import { useState } from 'react';
 import { ConflictError } from "../errors/http_errors";
 
@@ -16,11 +17,14 @@ interface SignUpModalProps {
 const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
 
     const [errorText, setErrorText] = useState<string | null>(null);
+    const [selectedRole, setSelectedRole] = useState<string>("");
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignUpCredentials>();
 
     async function onSubmit(credentials: SignUpCredentials) {
         try {
+            credentials.role = selectedRole;
+
             const newUser = await NotesApi.signUp(credentials);
             onSignUpSuccessful(newUser);
         } catch (error) {
@@ -32,6 +36,10 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
             console.error(error);
         }
     }
+
+    const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedRole(e.target.value);
+    };
 
     return (
         <Modal show onHide={onDismiss}>
@@ -75,6 +83,45 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
                         registerOptions={{ required: "Required" }}
                         error={errors.password}
                     />
+
+                    <Row xs={1} md={2} xl={3} className={`g-4 ${styleButtons.buttonsGrid}`}>
+                        <div>
+                            <input
+                                type="radio"
+                                id="doctor"
+                                value="Doctor"
+                                name="role"
+                                checked={selectedRole === "Doctor"}
+                                onChange={handleRoleChange}
+                            />
+                            <label htmlFor="doctor">Doctor</label>
+                        </div>
+                        
+                        <div>
+                        <input
+                            type="radio"
+                            id="technician"
+                            value="Technician"
+                            name="role"
+                            checked={selectedRole === "Technician"}
+                            onChange={handleRoleChange}
+                        />
+                        <label htmlFor="technician">Technician</label>
+                        </div>
+                        <div>
+                        <input
+                            type="radio"
+                            id="admin"
+                            value="Admin"
+                            name="role"
+                            checked={selectedRole === "Admin"}
+                            onChange={handleRoleChange}
+                        />
+                        <label htmlFor="admin">Admin</label>
+                        </div>
+                    </Row>
+
+                    
                     <Button
                         type="submit"
                         disabled={isSubmitting}
