@@ -73,6 +73,7 @@ export async function fetchNotes(): Promise<Note[]> {
 export interface NoteInput {
     title: string,
     text?: string,
+    doctor: string,
 }
 
 export async function createNote(note: NoteInput): Promise<Note> {

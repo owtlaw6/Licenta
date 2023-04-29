@@ -16,6 +16,7 @@ const Note = ({ note, onNoteClicked, onDeleteNoteClicked, className }: NoteProps
     const {
         title,
         text,
+        doctor,
         createdAt,
         updatedAt
     } = note;
@@ -41,6 +42,9 @@ const Note = ({ note, onNoteClicked, onDeleteNoteClicked, className }: NoteProps
                             e.stopPropagation();
                         }}
                     />
+                </Card.Title>
+                <Card.Title className={styleUtils.flexCenter}>
+                    {doctor}
                 </Card.Title>
                 <Card.Text className={styles.cardText}>
                     {text}

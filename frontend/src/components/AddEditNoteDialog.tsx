@@ -17,6 +17,7 @@ const AddEditNoteDialog = ({noteToEdit, onDismiss, onNoteSaved}: AddEditNoteDial
         defaultValues:{
             title: noteToEdit?.title || "",
             text: noteToEdit?.text || "",
+            doctor: noteToEdit?.doctor || "",
         }
     });
 
@@ -53,6 +54,15 @@ const AddEditNoteDialog = ({noteToEdit, onDismiss, onNoteSaved}: AddEditNoteDial
                         register={register}
                         registerOptions={{ required: "Required" }}
                         error={errors.title}
+                    />
+                    <TextInputField
+                        name="doctor"
+                        label="Doctor"
+                        type="text"
+                        placeholder="Doctor"
+                        register={register}
+                        registerOptions={{ required: "Required" }}
+                        error={errors.doctor}
                     />
 
                     <TextInputField

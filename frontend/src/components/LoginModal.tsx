@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { User } from "../models/user";
 import { LoginCredentials } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Form, Modal, Row } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
+import styleButtons from "../styles/signUpButtons.module.css";
 import styleUtils from "../styles/utils.module.css";
 import { useState } from 'react';
 import { UnauthorizedError } from "../errors/http_errors";
@@ -23,7 +24,7 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
     async function onSubmit(credentials: LoginCredentials) {
         try {
             credentials.role = selectedRole;
-            
+
             const user = await NotesApi.login(credentials);
             onLoginSuccessful(user);
         } catch (error) {
@@ -73,33 +74,42 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
                         registerOptions={{ required: "Required" }}
                         error={errors.password}
                     />
-                    <input
-                        type="radio"
-                        id="doctor"
-                        value="Doctor"
-                        name="role"
-                        checked={selectedRole === "Doctor"}
-                        onChange={handleRoleChange}
-                    />
-                    <label htmlFor="doctor">Doctor</label>
-                    <input
-                        type="radio"
-                        id="technician"
-                        value="Technician"
-                        name="role"
-                        checked={selectedRole === "Technician"}
-                        onChange={handleRoleChange}
-                    />
-                    <label htmlFor="technician">Technician</label>
-                    <input
-                        type="radio"
-                        id="admin"
-                        value="Admin"
-                        name="role"
-                        checked={selectedRole === "Admin"}
-                        onChange={handleRoleChange}
-                    />
-                    <label htmlFor="admin">Admin</label>
+                    <Row xs={1} md={2} xl={3} className={`g-4 ${styleButtons.buttonsGrid}`}>
+                        <div>
+                            <input
+                                type="radio"
+                                id="doctor"
+                                value="Doctor"
+                                name="role"
+                                checked={selectedRole === "Doctor"}
+                                onChange={handleRoleChange}
+                            />
+                            <label htmlFor="doctor">Doctor</label>
+                        </div>
+                        
+                        <div>
+                        <input
+                            type="radio"
+                            id="technician"
+                            value="Technician"
+                            name="role"
+                            checked={selectedRole === "Technician"}
+                            onChange={handleRoleChange}
+                        />
+                        <label htmlFor="technician">Technician</label>
+                        </div>
+                        <div>
+                        <input
+                            type="radio"
+                            id="admin"
+                            value="Admin"
+                            name="role"
+                            checked={selectedRole === "Admin"}
+                            onChange={handleRoleChange}
+                        />
+                        <label htmlFor="admin">Admin</label>
+                        </div>
+                    </Row>
                     <Button
                         type="submit"
                         disabled={isSubmitting}

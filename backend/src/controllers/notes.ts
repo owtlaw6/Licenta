@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
 import NoteModel from "../models/note";
+import UserModel from "../models/user";''
 import { assertIsDefined } from "../util/assertIsDefined";
 
 export const getNotes: RequestHandler = async (req, res, next) => {
@@ -10,8 +11,22 @@ export const getNotes: RequestHandler = async (req, res, next) => {
     try {
         assertIsDefined(authenticatedUserId);
 
-        const notes = await NoteModel.find({ userId: authenticatedUserId }).exec();
-        res.status(200).json(notes);
+        const authenticatedUser = await UserModel.findById(authenticatedUserId).exec();
+        if (!authenticatedUser) {
+            throw createHttpError(404, "User not found");
+        }
+        
+        if (authenticatedUser.role === "Doctor") {
+            const notes = await NoteModel.find({ doctor: authenticatedUser.username }).exec();
+            res.status(200).json(notes);
+        } else if (authenticatedUser.role === "Technician") {
+            const notes = await NoteModel.find({ userId: authenticatedUserId }).exec();
+            res.status(200).json(notes);
+        } else if (authenticatedUser.role === "Admin") {
+            res.status(200).json([]);
+        } else {
+            throw createHttpError(403, "You don't have permission to perform this action");
+        }
     } catch (error) {
         next(error);
     }
@@ -47,11 +62,13 @@ export const getNote: RequestHandler = async (req, res, next) => {
 interface CreateNoteBody {
     title?: string,
     text?: string,
+    doctor?: string,
 }
 
 export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknown> = async (req, res, next) => {
     const title = req.body.title;
     const text = req.body.text;
+    const doctor = req.body.doctor;
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -61,10 +78,15 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
             throw createHttpError(400, "Note must have a title");
         }
 
+        if (!doctor) {
+            throw createHttpError(400, "Note must have a doctor");
+        }
+
         const newNote = await NoteModel.create({
             userId: authenticatedUserId,
             title: title,
             text: text,
+            doctor: doctor,
         });
 
         res.status(201).json(newNote);
@@ -80,12 +102,14 @@ interface UpdateNoteParams {
 interface UpdateNoteBody {
     title?: string,
     text?: string,
+    doctor?: string,
 }
 
 export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBody, unknown> = async (req, res, next) => {
     const noteId = req.params.noteId;
     const newTitle = req.body.title;
     const newText = req.body.text;
+    const newDoctor = req.body.doctor;
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -97,6 +121,10 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
 
         if (!newTitle) {
             throw createHttpError(400, "Note must have a title");
+        }
+
+        if (!newDoctor) {
+            throw createHttpError(400, "Note must have a doctor");
         }
 
         const note = await NoteModel.findById(noteId).exec();
@@ -111,6 +139,7 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
 
         note.title = newTitle;
         note.text = newText;
+        note.doctor = newDoctor;
 
         const updatedNote = await note.save();
 
