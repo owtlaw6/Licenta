@@ -11,6 +11,7 @@ import NotesPage from './pages/NotesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPage from './pages/PrivacyPage';
 import styles from "./styles/App.module.css";
+import AdminRequestList from './components/AdminRequestList';
 
 function App() {
 
@@ -60,7 +61,7 @@ function App() {
 					<SignUpModal
 						onDismiss={() => setShowSignUpModal(false)}
 						onSignUpSuccessful={(user) => {
-							setLoggedInUser(user);
+							//setLoggedInUser(user);
 							setShowSignUpModal(false);
 						}}
 					/>
@@ -74,6 +75,9 @@ function App() {
 						}}
 					/>
 				}
+			</div>
+			<div className="App">
+				{loggedInUser && loggedInUser.role === 'admin' && <AdminRequestList />}
 			</div>
 		</BrowserRouter>
 	);
