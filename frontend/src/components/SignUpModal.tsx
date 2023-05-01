@@ -45,7 +45,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
         <Modal show onHide={onDismiss}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    Sign Up
+                    Request Account
                 </Modal.Title>
             </Modal.Header>
 
@@ -126,7 +126,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
                         type="submit"
                         disabled={isSubmitting}
                         className={styleUtils.width100}>
-                        Sign Up
+                        Request Account
                     </Button>
                 </Form>
             </Modal.Body>
