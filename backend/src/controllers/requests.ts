@@ -6,25 +6,9 @@ import UserModel from "../models/user";''
 import { assertIsDefined } from "../util/assertIsDefined";
 
 export const getRequests: RequestHandler = async (req, res, next) => {
-    const authenticatedUserId = req.session.userId;
-
     try {
-        assertIsDefined(authenticatedUserId);
-
-        const authenticatedUser = await UserModel.findById(authenticatedUserId).exec();
-        if (!authenticatedUser) {
-            throw createHttpError(404, "User not found");
-        }
-        
-        if (authenticatedUser.role === "Admin") {
-            const requests = await RequestModel.find().exec();
-            res.status(200).json(requests);
-        } else if (authenticatedUser.role === "Doctor" || 
-                   authenticatedUser.role === "Technician") {
-            res.status(200).json([]);
-        } else {
-            throw createHttpError(403, "You don't have permission to perform this action");
-        }
+        const requests = await RequestModel.find().exec();
+        res.status(200).json(requests);
     } catch (error) {
         next(error);
     }
@@ -32,11 +16,8 @@ export const getRequests: RequestHandler = async (req, res, next) => {
 
 export const getRequest: RequestHandler = async (req, res, next) => {
     const requestId = req.params.requestId;
-    const authenticatedUserId = req.session.userId;
 
     try {
-        assertIsDefined(authenticatedUserId);
-
         if (!mongoose.isValidObjectId(requestId)) {
             throw createHttpError(400, "Invalid request id");
         }
@@ -53,6 +34,10 @@ export const getRequest: RequestHandler = async (req, res, next) => {
     }
 };
 
+interface AcceptRequestParams {
+    requestId: string,
+}
+
 interface AcceptRequestBody {
     username?: string,
     email?: string,
@@ -60,7 +45,9 @@ interface AcceptRequestBody {
     role?: string,
 }
 
-export const acceptRequest: RequestHandler<unknown, unknown, AcceptRequestBody, unknown> = async (req, res, next) => {
+export const acceptRequest: RequestHandler<AcceptRequestParams, unknown, AcceptRequestBody, unknown> = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
@@ -90,7 +77,10 @@ export const acceptRequest: RequestHandler<unknown, unknown, AcceptRequestBody, 
             role: role,
         });
 
-        res.status(201).json(newUser);
+        await newUser.save();
+        await RequestModel.findByIdAndDelete(requestId).exec();
+
+        //res.status(201).json(newUser);
     } catch (error) {
         next(error);
     }

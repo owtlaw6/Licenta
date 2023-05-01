@@ -13,14 +13,14 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
     }
 };
 
-interface SignUpBody {
+interface SignUpRequestBody {
     username?: string,
     email?: string,
     password?: string,
     role?: string,
 }
 
-export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = 
+export const signUp: RequestHandler<unknown, unknown, SignUpRequestBody, unknown> = 
 async (req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
@@ -58,8 +58,9 @@ async (req, res, next) => {
         });
 
         //req.session.userId = newRequest._id;
+        const savedRequest = await newRequest.save();
 
-        res.status(201).json(newRequest);
+        res.status(201).json(savedRequest);
     } catch (error) {
         next(error);
     }
