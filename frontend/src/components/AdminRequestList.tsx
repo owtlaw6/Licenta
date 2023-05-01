@@ -1,18 +1,22 @@
-// src/components/AdminRequestList.tsx
 import React, { useEffect, useState } from 'react';
 import { Request } from '../models/request';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const fetchRequests = async (): Promise<Request[]> => {
     const response = await axios.get('/api/requests');
     return response.data;
 };
 
-export const approveRequest = async (requestId: string): Promise<void> => {
-    console.log(`Sending request to approve requestId: ${requestId}`);
-    const response = await axios.post(`/api/requests/approve/${requestId}`);
-    return response.data;
-};
+const approveRequest = (request: Request) => {
+    return axios.post(`/api/requests/approve/${request._id}`, {
+      username: request.username,
+      email: request.email,
+      password: request.password,
+      role: request.role,
+    });
+  };
 
 const AdminRequestList: React.FC = () => {
     const [requests, setRequests] = useState<Request[]>([]);
@@ -30,17 +34,21 @@ const AdminRequestList: React.FC = () => {
         }
     };
 
-    const handleApprove = async (requestId: string) => {
-        try {
-            await approveRequest(requestId);
-            loadRequests();
-        } catch (error) {
+    const handleApprove = async (request: Request) => {
+        approveRequest(request)
+          .then(() => {
+            setRequests(requests.filter((r) => r._id !== request._id));
+            toast.success("Request approved.");
+          })
+          .catch((error) => {
+            toast.error("An error occurred while approving the request.");
             console.error(error);
-        }
-    };
+          });
+      };
 
     return (
         <div>
+            <ToastContainer />
             <h2>Registration Requests</h2>
             <table>
                 <thead>
@@ -60,7 +68,7 @@ const AdminRequestList: React.FC = () => {
                             <td>
                                 <button onClick={() => {
                                     console.log('Approve button clicked'); 
-                                    handleApprove(request._id)}}>
+                                    handleApprove(request)}}>
                                         Approve
                                 </button>
                             </td>
