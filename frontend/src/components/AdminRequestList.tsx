@@ -3,6 +3,8 @@ import { Request } from '../models/request';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Button } from 'react-bootstrap';
+import styles from "../styles/adminButtons.module.css";
 
 export const fetchRequests = async (): Promise<Request[]> => {
     const response = await axios.get('/api/requests');
@@ -47,16 +49,17 @@ const AdminRequestList: React.FC = () => {
       };
 
     return (
-        <div>
+        <>
             <ToastContainer />
-            <h2>Registration Requests</h2>
-            <table>
-                <thead>
+            <h2>Registration Requests</h2><br/><br/>
+
+            <table className="table">
+                <thead className="thead-dark">
                     <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Action</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,17 +69,24 @@ const AdminRequestList: React.FC = () => {
                             <td>{request.email}</td>
                             <td>{request.role}</td>
                             <td>
-                                <button onClick={() => {
+                                <Button className={styles.buttonsAdmin}
+                                    onClick={() => {
                                     console.log('Approve button clicked'); 
                                     handleApprove(request)}}>
                                         Approve
-                                </button>
+                                </Button>
+                                <Button 
+                                    onClick={() => {
+                                    console.log('Approve button clicked'); 
+                                    handleApprove(request)}}>
+                                        Deny
+                                </Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 };
 
