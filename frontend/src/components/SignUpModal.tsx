@@ -8,13 +8,14 @@ import styleUtils from "../styles/utils.module.css";
 import styleButtons from "../styles/signUpButtons.module.css";
 import { useState } from 'react';
 import { ConflictError } from "../errors/http_errors";
+import { Request } from "../models/request";
 
 interface SignUpModalProps {
     onDismiss: () => void,
-    onSignUpSuccessful: (user: User) => void,
+    onSignUpRequestSuccessful: (request: Request) => void,
 }
 
-const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
+const SignUpModal = ({ onDismiss, onSignUpRequestSuccessful }: SignUpModalProps) => {
 
     const [errorText, setErrorText] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<string>("");
@@ -25,8 +26,8 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
         try {
             credentials.role = selectedRole;
 
-            const newUser = await NotesApi.signUp(credentials);
-            onSignUpSuccessful(newUser);
+            const newRequest = await NotesApi.signUp(credentials);
+            onSignUpRequestSuccessful(newRequest);
         } catch (error) {
             if (error instanceof ConflictError) {
                 setErrorText(error.message);
@@ -126,7 +127,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
                         type="submit"
                         disabled={isSubmitting}
                         className={styleUtils.width100}>
-                        Sign Up
+                        Request account
                     </Button>
                 </Form>
             </Modal.Body>

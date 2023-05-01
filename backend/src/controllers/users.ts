@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import UserModel from "../models/user";
+import RequestModel from "../models/request"
 import bcrypt from "bcrypt";
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
@@ -19,7 +20,8 @@ interface SignUpBody {
     role?: string,
 }
 
-export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = async (req, res, next) => {
+export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = 
+async (req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
     const passwordRaw = req.body.password;
@@ -48,16 +50,16 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
 
         const passwordHashed = await bcrypt.hash(passwordRaw, 10);
 
-        const newUser = await UserModel.create({
+        const newRequest = await RequestModel.create({
             username: username,
             email: email,
             password: passwordHashed,
             role: role,
         });
 
-        req.session.userId = newUser._id;
+        //req.session.userId = newRequest._id;
 
-        res.status(201).json(newUser);
+        res.status(201).json(newRequest);
     } catch (error) {
         next(error);
     }

@@ -1,5 +1,6 @@
 import { ConflictError, UnauthorizedError } from "../errors/http_errors";
 import { Note } from "../models/note";
+import { Request } from "../models/request";
 import { User } from "../models/user";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
@@ -31,7 +32,7 @@ export interface SignUpCredentials {
     role: string,
 }
 
-export async function signUp(credentials: SignUpCredentials): Promise<User> {
+export async function signUp(credentials: SignUpCredentials): Promise<Request> {
     const response = await fetchData("/api/users/signup",
         {
             method: "POST",
