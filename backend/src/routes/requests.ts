@@ -8,6 +8,6 @@ router.get("/", RequestController.getAllRequests);
 
 router.post("/approve/:requestId", requiresAdmin, RequestController.approveRequest);
 
-router.post("/approve/:requestId", requiresAdmin, RequestController.denyRequest);
+router.delete("/deny/:requestId", requiresAdmin, RequestController.denyRequest);
 
 export default router;

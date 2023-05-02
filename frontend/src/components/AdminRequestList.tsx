@@ -48,6 +48,17 @@ const AdminRequestList: React.FC = () => {
           });
       };
 
+    const handleDeny = async (request: Request) => {
+        try {
+          await axios.delete(`/api/requests/deny/${request._id}`);
+          toast.success("Request denied successfully.");
+          setRequests(requests.filter((r) => r._id !== request._id));
+        } catch (error) {
+          console.error(error);
+          toast.error("Failed to deny the request.");
+        }
+      };
+
     return (
         <>
             <ToastContainer />
@@ -77,8 +88,8 @@ const AdminRequestList: React.FC = () => {
                                 </Button>
                                 <Button 
                                     onClick={() => {
-                                    console.log('Approve button clicked'); 
-                                    handleApprove(request)}}>
+                                    console.log('Deny button clicked'); 
+                                    handleDeny(request)}}>
                                         Deny
                                 </Button>
                             </td>
