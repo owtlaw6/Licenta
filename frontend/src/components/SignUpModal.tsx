@@ -84,7 +84,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
                         error={errors.password}
                     />
 
-                    <Row xs={1} md={2} xl={3} className={`g-4 ${styleButtons.buttonsGrid}`}>
+                    <Row xs={1} md={2} xl={4} className={`g-4 ${styleButtons.buttonsGrid}`}>
                         <div>
                             <input
                                 type="radio"
@@ -95,6 +95,18 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
                                 onChange={handleRoleChange}
                             />
                             <label htmlFor="doctor">Doctor</label>
+                        </div>
+
+                        <div>
+                        <input
+                            type="radio"
+                            id="assistant"
+                            value="Assistant"
+                            name="role"
+                            checked={selectedRole === "Assistant"}
+                            onChange={handleRoleChange}
+                        />
+                        <label htmlFor="assistant">Assistant</label>
                         </div>
                         
                         <div>

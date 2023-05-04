@@ -2,7 +2,8 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
 import NoteModel from "../models/note";
-import UserModel from "../models/user";''
+import UserModel from "../models/user";
+import PatientModel from "../models/patient";
 import { assertIsDefined } from "../util/assertIsDefined";
 
 export const getNotes: RequestHandler = async (req, res, next) => {
@@ -24,6 +25,9 @@ export const getNotes: RequestHandler = async (req, res, next) => {
             res.status(200).json(notes);
         } else if (authenticatedUser.role === "Admin") {
             res.status(200).json([]);
+        } else if (authenticatedUser.role === "Assistant") {
+            const patient = await PatientModel.find().exec();
+            res.status(200).json(patient);
         } else {
             throw createHttpError(403, "You don't have permission to perform this action");
         }
