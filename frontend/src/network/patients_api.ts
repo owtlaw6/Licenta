@@ -25,7 +25,7 @@ export async function getLoggedInUser(): Promise<User> {
 }
 
 export async function fetchPatients(): Promise<Patient[]> {
-    const response = await fetchData("/api/patient", { method: "GET" });
+    const response = await fetchData("/api/patients", { method: "GET" });
     return response.json();
 }
 
@@ -36,7 +36,7 @@ export interface PatientInput {
 }
 
 export async function createPatient(patient: PatientInput): Promise<Patient> {
-    const response = await fetchData("/api/patient",
+    const response = await fetchData("/api/patients",
         {
             method: "POST",
             headers: {
@@ -48,7 +48,7 @@ export async function createPatient(patient: PatientInput): Promise<Patient> {
 }
 
 export async function updatePatient(patientId: string, patient: PatientInput): Promise<Patient> {
-    const response = await fetchData("/api/patient/" + patientId,
+    const response = await fetchData("/api/patients/" + patientId,
         {
             method: "PATCH",
             headers: {
@@ -60,5 +60,5 @@ export async function updatePatient(patientId: string, patient: PatientInput): P
 }
 
 export async function deletePatient(patientId: string) {
-    await fetchData("/api/patient/" + patientId, { method: "DELETE" });
+    await fetchData("/api/patients/" + patientId, { method: "DELETE" });
 }
