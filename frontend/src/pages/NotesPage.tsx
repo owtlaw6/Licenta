@@ -5,6 +5,7 @@ import AdminPageLoggedInView from "../components/AdminRequestList"
 import { User } from "../models/user";
 import styles from "../styles/NotesPage.module.css";
 import DoctorPageLoggedInView from "../components/DoctorPageLoggedInView";
+import AssistantPageLoggedIn from "../components/AssistantPageLoggedIn";
 
 interface NotesPageProps {
     loggedInUser: User | null,
@@ -26,7 +27,9 @@ const NotesPage = ({ loggedInUser }: NotesPageProps) => {
                         ? <NotesPageLoggedInView />
                         : (loggedInUser.role === "Doctor") 
                             ? <DoctorPageLoggedInView />
-                            : <AdminPageLoggedInView />
+                            : (loggedInUser.role === "Assistant") 
+                                ? <AssistantPageLoggedIn />
+                                : <AdminPageLoggedInView />
                     : <NotesPageLoggedOutView />
                 }
             </>
