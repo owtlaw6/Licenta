@@ -5,12 +5,12 @@ const router = express.Router();
 
 router.get("/", PatientController.getPatients);
 
-router.get("/:PatientId", PatientController.getPatient);
+router.get("/:patientId", PatientController.getPatient);
 
 router.post("/", PatientController.createPatient);
 
-router.patch("/:PatientId", PatientController.updatePatient);
+router.patch("/:patientId", PatientController.updatePatient);
 
-router.delete("/:PatientId", PatientController.deletePatient);
+router.delete("/:patientId", PatientController.deletePatient);
 
 export default router;

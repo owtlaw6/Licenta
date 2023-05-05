@@ -5,12 +5,11 @@ import TextInputField from "./form/TextInputField";
 import * as PatientsApi from "../network/patients_api"
 import DoctorSelect from "./DoctorSelect";
 import { useState } from "react";
-import { Doctor } from "../network/general_api"; 
 
 interface PatientInput {
     name: string,
     cnp: string,
-    doctor: string,
+    doctors: string[],
 }
 
 interface AddEditPatientDialogProps {
@@ -21,9 +20,9 @@ interface AddEditPatientDialogProps {
 
 const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEditPatientDialogProps) => {
 
-    const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>([]);
+    const [selectedDoctors, setSelectedDoctors] = useState<string[]>(patientToEdit?.doctors || []);
 
-    const handleDoctorChange = (selectedOptions: Doctor[]) => {
+    const handleDoctorChange = (selectedOptions: string[]) => {
         setSelectedDoctors(selectedOptions);
     };
 
@@ -31,11 +30,11 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
         defaultValues:{
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",
-            doctor: patientToEdit?.doctor || "",
         }
     });
 
     async function onSubmit(input: PatientInput){
+        input = {...input, doctors: selectedDoctors};
         try {
             let patientResponse: Patient;
             if(patientToEdit){
@@ -82,7 +81,9 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
 
                     <form>
                         <label htmlFor="doctors">Doctors:</label>
-                        <DoctorSelect onChange={handleDoctorChange} />
+                        <DoctorSelect onChange={handleDoctorChange} 
+                        selectedDoctors={selectedDoctors}
+                        />
                     </form>
 
                 </Form>

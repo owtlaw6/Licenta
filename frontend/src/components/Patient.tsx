@@ -16,7 +16,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
     const {
         name,
         cnp,
-        doctor,
+        doctors,
         createdAt,
         updatedAt
     } = patient;
@@ -47,7 +47,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
                     {cnp}
                 </Card.Title>
                 <Card.Title className={styleUtils.flexCenter}>
-                    {doctor}
+                    {doctors}
                 </Card.Title>
             </Card.Body>
             <Card.Footer className="text-muted">
