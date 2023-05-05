@@ -35,7 +35,7 @@ export const getPatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 1 id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();
@@ -99,8 +99,12 @@ interface UpdatePatientBody {
     doctor?: string,
 }
 
-export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = async (req, res, next) => {
+export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = 
+async (req, res, next) => {
     const patientId = req.params.patientId;
+
+    console.log("random " + patientId);
+    
     const newName = req.body.name;
     const newCnp = req.body.cnp;
     const newDoctor = req.body.doctor;
@@ -110,7 +114,7 @@ export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdateP
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 2 id");
         }
 
         if (!newName) {
@@ -151,7 +155,7 @@ export const deletePatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 3 id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();

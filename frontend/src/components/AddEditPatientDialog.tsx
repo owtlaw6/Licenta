@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { Patient } from "../models/patient";
 import TextInputField from "./form/TextInputField";
 import * as PatientsApi from "../network/patients_api"
+import DoctorSelect from "./DoctorSelect";
+import { useState } from "react";
+import { Doctor } from "../network/general_api"; 
 
 interface PatientInput {
     name: string,
@@ -17,6 +20,12 @@ interface AddEditPatientDialogProps {
 }
 
 const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEditPatientDialogProps) => {
+
+    const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>([]);
+
+    const handleDoctorChange = (selectedOptions: Doctor[]) => {
+        setSelectedDoctors(selectedOptions);
+    };
 
     const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
         defaultValues:{
@@ -71,15 +80,11 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
                         
                     />
 
-                    <TextInputField                        
-                        name="doctor"
-                        label="Doctor"
-                        type="text"
-                        placeholder="Doctor"
-                        register={register}
-                        registerOptions={{ required: "Required" }}
-                        error={errors.doctor}
-                    />
+                    <form>
+                        <label htmlFor="doctors">Doctors:</label>
+                        <DoctorSelect onChange={handleDoctorChange} />
+                    </form>
+
                 </Form>
             </Modal.Body>
 
