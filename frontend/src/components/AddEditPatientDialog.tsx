@@ -3,11 +3,13 @@ import { useForm } from "react-hook-form";
 import { Patient } from "../models/patient";
 import TextInputField from "./form/TextInputField";
 import * as PatientsApi from "../network/patients_api"
+import DoctorSelect from "./DoctorSelect";
+import { useState } from "react";
 
 interface PatientInput {
     name: string,
     cnp: string,
-    doctor: string,
+    doctors: string[],
 }
 
 interface AddEditPatientDialogProps {
@@ -18,15 +20,21 @@ interface AddEditPatientDialogProps {
 
 const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEditPatientDialogProps) => {
 
+    const [selectedDoctors, setSelectedDoctors] = useState<string[]>(patientToEdit?.doctors || []);
+
+    const handleDoctorChange = (selectedOptions: string[]) => {
+        setSelectedDoctors(selectedOptions);
+    };
+
     const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
         defaultValues:{
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",
-            doctor: patientToEdit?.doctor || "",
         }
     });
 
     async function onSubmit(input: PatientInput){
+        input = {...input, doctors: selectedDoctors};
         try {
             let patientResponse: Patient;
             if(patientToEdit){
@@ -71,15 +79,13 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
                         
                     />
 
-                    <TextInputField                        
-                        name="doctor"
-                        label="Doctor"
-                        type="text"
-                        placeholder="Doctor"
-                        register={register}
-                        registerOptions={{ required: "Required" }}
-                        error={errors.doctor}
-                    />
+                    <form>
+                        <label htmlFor="doctors">Doctors:</label>
+                        <DoctorSelect onChange={handleDoctorChange} 
+                        selectedDoctors={selectedDoctors}
+                        />
+                    </form>
+
                 </Form>
             </Modal.Body>
 

@@ -4,6 +4,16 @@ import UserModel from "../models/user";
 import RequestModel from "../models/request";
 import bcrypt from "bcrypt";
 
+export const getDoctors: RequestHandler = async (req, res, next) => {
+    try {
+        const doctors = await UserModel.find({ role: "Doctor" });
+        res.json(doctors);
+    } catch (error) {
+        console.error("Error getting doctors:", error);
+        res.status(500).json({ message: "An error occurred while fetching doctors" });
+    }
+};
+
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.session.userId).select("+email").exec();

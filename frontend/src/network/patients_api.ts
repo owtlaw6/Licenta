@@ -32,7 +32,7 @@ export async function fetchPatients(): Promise<Patient[]> {
 export interface PatientInput {
     name: string,
     cnp: string,
-    doctor: string,
+    doctors: string[],
 }
 
 export async function createPatient(patient: PatientInput): Promise<Patient> {

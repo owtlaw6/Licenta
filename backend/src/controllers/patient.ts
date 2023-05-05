@@ -35,7 +35,7 @@ export const getPatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 1 id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();
@@ -53,13 +53,11 @@ export const getPatient: RequestHandler = async (req, res, next) => {
 interface CreatePatientBody {
     name?: string,
     cnp?: string,
-    doctor?: string,
+    doctors?: string[],
 }
 
 export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, unknown> = async (req, res, next) => {
-    const name = req.body.name;
-    const cnp = req.body.cnp;
-    const doctor = req.body.doctor;
+    const {name, cnp, doctors} = req.body
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -73,14 +71,14 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
             throw createHttpError(400, "Patient must have a CNP");
         }
 
-        if (!doctor) {
+        if (!doctors) {
             throw createHttpError(400, "Patient must have a doctor");
         }
 
         const newPatient = await PatientModel.create({
             name: name,
             cnp: cnp,
-            doctor: doctor,
+            doctors: doctors,
         });
 
         res.status(201).json(newPatient);
@@ -96,21 +94,22 @@ interface UpdatePatientParams {
 interface UpdatePatientBody {
     name?: string,
     cnp?: string,
-    doctor?: string,
+    doctors?: string[],
 }
 
-export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = async (req, res, next) => {
+export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = 
+async (req, res, next) => {
     const patientId = req.params.patientId;
     const newName = req.body.name;
     const newCnp = req.body.cnp;
-    const newDoctor = req.body.doctor;
+    const newDoctors = req.body.doctors;
     const authenticatedUserId = req.session.userId;
 
     try {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 2 id");
         }
 
         if (!newName) {
@@ -121,21 +120,23 @@ export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdateP
             throw createHttpError(400, "Patient must have a CNP");
         }
 
-        if (!newDoctor) {
+        if (!newDoctors) {
             throw createHttpError(400, "Patient must have a doctor");
         }
 
-        const patient = await PatientModel.findById(patientId).exec();
+        const filter = { _id: patientId };
+        const update = {
+            name: newName,
+            cnp: newCnp,
+            doctors: newDoctors,
+        };
 
-        if (!patient) {
+        const options = { new: true };
+        const updatedPatient = await PatientModel.findOneAndUpdate(filter, update, options).exec();
+
+        if (!updatedPatient) {
             throw createHttpError(404, "Patient not found");
         }
-
-        patient.name = newName;
-        patient.cnp = newCnp;
-        patient.doctors = [];
-
-        const updatedPatient = await patient.save();
 
         res.status(200).json(updatedPatient);
     } catch (error) {
@@ -151,7 +152,7 @@ export const deletePatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
+            throw createHttpError(400, "Invalid patient 3 id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();
