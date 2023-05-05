@@ -133,7 +133,7 @@ export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdateP
 
         patient.name = newName;
         patient.cnp = newCnp;
-        patient.doctor = newDoctor;
+        patient.doctors = [];
 
         const updatedPatient = await patient.save();
 
