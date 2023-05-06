@@ -4,6 +4,8 @@ import { Card } from "react-bootstrap";
 import { Patient as PatientModel } from "../models/patient";
 import { formatDate } from "../utils/formatDate";
 import { MdDelete } from "react-icons/md";
+import React, { useState, useEffect } from "react";
+import { fetchDoctors, Doctor } from "../network/general_api";
 
 interface PatientProps {
     patient: PatientModel,
@@ -20,6 +22,28 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
         createdAt,
         updatedAt
     } = patient;
+
+    const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+
+    useEffect(() => {
+        const getDoctors = async () => {
+            const fetchedDoctors = await fetchDoctors();
+            setDoctorsAll(fetchedDoctors);
+        };
+        getDoctors();
+    }, []);
+
+    let doctorsNames: string[];
+    doctorsNames = [];
+    for(let i = 0; i < doctors.length; i++){
+        const doctorId = patient.doctors[i];
+        const searchedDoctor = doctorsAll.find(({ _id }) => _id === doctorId);
+        if (searchedDoctor){
+            if (i !== doctors.length - 1)
+                doctorsNames.push(searchedDoctor.name + ", ");
+            else doctorsNames.push(searchedDoctor.name);
+        }
+    }
 
     let createdUpdated: string;
     if (updatedAt > createdAt) {
@@ -47,7 +71,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
                     {cnp}
                 </Card.Title>
                 <Card.Title className={styleUtils.flexCenter}>
-                    {doctors}
+                    {doctorsNames}
                 </Card.Title>
             </Card.Body>
             <Card.Footer className="text-muted">

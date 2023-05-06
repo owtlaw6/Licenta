@@ -14,7 +14,6 @@ const DoctorSelect: React.FC<DoctorSelectProps> = ({ selectedDoctors, onChange }
         const getDoctors = async () => {
             const fetchedDoctors = await fetchDoctors();
             setDoctors(fetchedDoctors);
-            console.log("random " + fetchedDoctors.length);
         };
 
         getDoctors();
