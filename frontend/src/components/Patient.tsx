@@ -19,6 +19,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
         name,
         cnp,
         doctors,
+        description,
         createdAt,
         updatedAt
     } = patient;
@@ -39,7 +40,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
         const doctorId = patient.doctors[i];
         const searchedDoctor = doctorsAll.find(({ _id }) => _id === doctorId);
         if (searchedDoctor){
-            if (i !== doctors.length - 1)
+            if (i !== patient.doctors.length - 1)
                 doctorsNames.push(searchedDoctor.name + ", ");
             else doctorsNames.push(searchedDoctor.name);
         }
@@ -72,6 +73,9 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
                 </Card.Title>
                 <Card.Title className={styleUtils.flexCenter}>
                     {doctorsNames}
+                </Card.Title>
+                <Card.Title className={styles.cardText}>
+                    {description}
                 </Card.Title>
             </Card.Body>
             <Card.Footer className="text-muted">

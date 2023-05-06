@@ -3,6 +3,7 @@ export interface Patient{
     name: string,
     cnp: string,
     doctors: string[],
+    description: string,
     createdAt: string,
     updatedAt: string,
 }

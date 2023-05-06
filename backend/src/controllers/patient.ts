@@ -19,6 +19,14 @@ export const getPatients: RequestHandler = async (req, res, next) => {
         if (authenticatedUser.role === "Assistant") {
             const patient = await PatientModel.find().exec();
             res.status(200).json(patient);
+        } else if (authenticatedUser.role === "Doctor") {
+            const patient = await PatientModel.find({
+                doctors: {
+                    $in: [authenticatedUserId],
+                },
+            }).exec();
+
+            res.status(200).json(patient);
         } else {
             throw createHttpError(403, "You don't have permission to perform this action");
         }
@@ -54,10 +62,11 @@ interface CreatePatientBody {
     name?: string,
     cnp?: string,
     doctors?: string[],
+    description?: string,
 }
 
 export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, unknown> = async (req, res, next) => {
-    const {name, cnp, doctors} = req.body
+    const {name, cnp, doctors, description} = req.body
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -79,6 +88,7 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
             name: name,
             cnp: cnp,
             doctors: doctors,
+            description: description,
         });
 
         res.status(201).json(newPatient);
@@ -95,6 +105,7 @@ interface UpdatePatientBody {
     name?: string,
     cnp?: string,
     doctors?: string[],
+    description?: string,
 }
 
 export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = 
@@ -103,6 +114,7 @@ async (req, res, next) => {
     const newName = req.body.name;
     const newCnp = req.body.cnp;
     const newDoctors = req.body.doctors;
+    const newDescription = req.body.description;
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -129,6 +141,7 @@ async (req, res, next) => {
             name: newName,
             cnp: newCnp,
             doctors: newDoctors,
+            description: newDescription,
         };
 
         const options = { new: true };

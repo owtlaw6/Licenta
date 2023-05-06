@@ -1,56 +1,56 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from "react-bootstrap";
-import { Note as NoteModel } from '../models/note';
-import * as NotesApi from "../network/notes_api";
 import styles from "../styles/NotesPage.module.css";
-import AddEditNoteDialog from "./AddEditNoteDialog";
-import Note from './Note';
+import Patient from './Patient';
+import { Patient as PatientModel } from '../models/patient';
+import AddEditPatientDialog from './AddEditPatientDialog';
+import * as PatientsApi from "../network/patients_api";
 
 const DoctorPageLoggedInView = () => {
 
-    const [notes, setNotes] = useState<NoteModel[]>([]);
-    const [notesLoading, setNotesLoading] = useState(true);
-    const [showNotesLoadingError, setShowNotesLoadingError] = useState(false);
+    const [patients, setPatients] = useState<PatientModel[]>([]);
+    const [patientsLoading, setPatientsLoading] = useState(true);
+    const [showPatientsLoadingError, setShowPatientsLoadingError] = useState(false);
 
-    const [showAddNoteDialog, setShowAddNoteDialog] = useState(false);
-    const [noteToEdit, setNoteToEdit] = useState<NoteModel | null>(null);
+    const [showPatientDialog, setShowPatientDialog] = useState(false);
+    const [patientToEdit, setPatientToEdit] = useState<PatientModel | null>(null);
 
     useEffect(() => {
-        async function loadNotes() {
+        async function loadPatient() {
             try {
-                setShowNotesLoadingError(false);
-                setNotesLoading(true);
-                const notes = await NotesApi.fetchNotes();
-                setNotes(notes);
+                setShowPatientsLoadingError(false);
+                setPatientsLoading(true);
+                const patients = await PatientsApi.fetchPatients();
+                setPatients(patients);
             } catch (error) {
                 console.error(error);
-                setShowNotesLoadingError(true);
+                setShowPatientsLoadingError(true);
             } finally {
-                setNotesLoading(false);
+                setPatientsLoading(false);
             }
         }
-        loadNotes();
+        loadPatient();
     }, []);
 
-    async function deleteNote(note: NoteModel) {
+    async function deletePatient(patient: PatientModel) {
         try {
-            await NotesApi.deleteNote(note._id);
-            setNotes(notes.filter(existingNote => existingNote._id !== note._id));
+            await PatientsApi.deletePatient(patient._id);
+            setPatients(patients.filter(existingPatient => existingPatient._id !== patient._id));
         } catch (error) {
             console.error(error);
             alert(error);
         }
     }
 
-    const notesGrid =
+    const patientsGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
-            {notes.map(note => (
-                <Col key={note._id}>
-                    <Note
-                        note={note}
+            {patients.map(patient => (
+                <Col key={patient._id}>
+                    <Patient
+                        patient={patient}
                         className={styles.note}
-                        onNoteClicked={setNoteToEdit}
-                        onDeleteNoteClicked={deleteNote}
+                        onPatientClicked={setPatientToEdit}
+                        onDeletePatientClicked={deletePatient}
                     />
                 </Col>
             ))}
@@ -58,32 +58,33 @@ const DoctorPageLoggedInView = () => {
 
     return (
         <>
-            {notesLoading && <Spinner animation='border' variant='primary' />}
-            {showNotesLoadingError && <p>Something went wrong. Please refresh the page.</p>}
-            {!notesLoading && !showNotesLoadingError &&
+            {patientsLoading && <Spinner animation='border' variant='primary' />}
+            {showPatientsLoadingError && <p>Something went wrong. Please refresh the page.</p>}
+            {!patientsLoading && !showPatientsLoadingError &&
                 <>
-                    {notes.length > 0
-                        ? notesGrid
-                        : <p>You don't have any notes yet</p>
+                    {patients.length > 0
+                        ? patientsGrid
+                        : <p>You don't have any patients yet</p>
                     }
                 </>
             }
-            {showAddNoteDialog &&
-                <AddEditNoteDialog
-                    onDismiss={() => setShowAddNoteDialog(false)}
-                    onNoteSaved={(newNote) => {
-                        setNotes([...notes, newNote]);
-                        setShowAddNoteDialog(false);
+            {showPatientDialog &&
+                <AddEditPatientDialog
+                    onDismiss={() => setShowPatientDialog(false)}
+                    onPatientSaved={(newPatient) => {
+                        setPatients([...patients, newPatient]);
+                        setShowPatientDialog(false);
                     }}
                 />
             }
-            {noteToEdit &&
-                <AddEditNoteDialog
-                    noteToEdit={noteToEdit}
-                    onDismiss={() => setNoteToEdit(null)}
-                    onNoteSaved={(updatedNote) => {
-                        setNotes(notes.map(existingNote => existingNote._id === updatedNote._id ? updatedNote : existingNote));
-                        setNoteToEdit(null);
+            {patientToEdit &&
+                <AddEditPatientDialog
+                    patientToEdit={patientToEdit}
+                    onDismiss={() => setPatientToEdit(null)}
+                    onPatientSaved={(updatedPatient) => {
+                        setPatients(patients.map(existingPatient => existingPatient._id === 
+                                            updatedPatient._id ? updatedPatient : existingPatient));
+                        setPatientToEdit(null);
                     }}
                 />
             }

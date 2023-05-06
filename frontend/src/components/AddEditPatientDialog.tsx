@@ -10,6 +10,7 @@ interface PatientInput {
     name: string,
     cnp: string,
     doctors: string[],
+    description: string,
 }
 
 interface AddEditPatientDialogProps {
@@ -30,6 +31,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
         defaultValues:{
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",
+            description: patientToEdit?.description || "",
         }
     });
 
@@ -80,12 +82,22 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
                     />
 
                     <form>
-                        <label htmlFor="doctors">Doctors:</label>
+                        <label htmlFor="doctors">Doctors</label>
                         <DoctorSelect onChange={handleDoctorChange} 
                         selectedDoctors={selectedDoctors}
                         />
                     </form>
 
+                    <br/>
+                    <TextInputField
+                        name="description"
+                        label="Description"
+                        as="textarea"
+                        rows={5}
+                        placeholder="Description"
+                        register={register}
+                        error={errors.description}
+                    />
                 </Form>
             </Modal.Body>
 
