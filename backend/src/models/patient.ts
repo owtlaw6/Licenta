@@ -2,7 +2,7 @@ import { InferSchemaType, model, ObjectId, Schema } from "mongoose";
 
 const patientSchema = new Schema({
     name: { type: String, required: true },
-    cnp: { type: String, required: true },
+    cnp: { type: String, required: true, unique: true },
     doctors: [{type: Schema.Types.ObjectId, ref: 'User'}],
     description: { type: String, required: false },
 }, { timestamps: true });

@@ -43,7 +43,7 @@ export const getPatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient 1 id");
+            throw createHttpError(400, "Invalid patient id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();
@@ -71,6 +71,12 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
 
     try {
         assertIsDefined(authenticatedUserId);
+
+        const existingPatient = await PatientModel.findOne({ cnp: cnp }).exec();
+
+        if (existingPatient) {
+            throw createHttpError(409, "CNP already exists for a patient.");
+        }
 
         if (!name) {
             throw createHttpError(400, "Patient must have a name");
@@ -121,7 +127,7 @@ async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient 2 id");
+            throw createHttpError(400, "Invalid patient id");
         }
 
         if (!newName) {
@@ -165,7 +171,7 @@ export const deletePatient: RequestHandler = async (req, res, next) => {
         assertIsDefined(authenticatedUserId);
 
         if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient 3 id");
+            throw createHttpError(400, "Invalid patient id");
         }
 
         const patient = await PatientModel.findById(patientId).exec();
