@@ -55,37 +55,39 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
     }
 
     return (
-        <Card
-            className={`${styles.noteCard} ${className}`}
-            onClick={() => onPatientClicked(patient)}>
-            <Card.Body className={styles.cardBody}>
-                <Card.Title className={styleUtils.flexCenter}>
-                    {name}
-                    {caller === 'assistant' && (
-                        <MdDelete
-                            className="text-muted ms-auto"
-                            onClick={(e) => {
-                                onDeletePatientClicked(patient);
-                                e.stopPropagation();
-                            }}
-                        />
-                    )}
-                    
-                </Card.Title>
-                <Card.Title className={styleUtils.flexCenter}>
-                    {cnp}
-                </Card.Title>
-                <Card.Title className={styleUtils.flexCenter}>
-                    {doctorsNames}
-                </Card.Title>
-                <Card.Title className={styles.cardText}>
-                    {description}
-                </Card.Title>
-            </Card.Body>
-            <Card.Footer className="text-muted">
-                {createdUpdated}
-            </Card.Footer>
-        </Card>
+        <>
+            <Card
+                className={`${styles.noteCard} ${className}`}
+                onClick={() => onPatientClicked(patient)}>
+                <Card.Body className={styles.cardBody}>
+                    <Card.Title className={styleUtils.flexCenter}>
+                        {name}
+                        {caller === 'assistant' && (
+                            <MdDelete
+                                className="text-muted ms-auto"
+                                onClick={(e) => {
+                                    onDeletePatientClicked(patient);
+                                    e.stopPropagation();
+                                }}
+                            />
+                        )}
+                        
+                    </Card.Title>
+                    <Card.Title className={styleUtils.flexCenter}>
+                        {cnp}
+                    </Card.Title>
+                    <Card.Title className={styleUtils.flexCenter}>
+                        {doctorsNames}
+                    </Card.Title>
+                    <Card.Title className={styles.cardText}>
+                        {description}
+                    </Card.Title>
+                </Card.Body>
+                <Card.Footer className="text-muted">
+                    {createdUpdated}
+                </Card.Footer>
+            </Card>
+        </>
     )
 }
 

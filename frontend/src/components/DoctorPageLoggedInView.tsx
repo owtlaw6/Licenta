@@ -5,6 +5,7 @@ import Patient from './Patient';
 import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
+import { MdSearch } from "react-icons/md";
 
 const DoctorPageLoggedInView = () => {
 
@@ -14,6 +15,8 @@ const DoctorPageLoggedInView = () => {
 
     const [showPatientDialog, setShowPatientDialog] = useState(false);
     const [patientToEdit, setPatientToEdit] = useState<PatientModel | null>(null);
+
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         async function loadPatient() {
@@ -43,18 +46,35 @@ const DoctorPageLoggedInView = () => {
     }
 
     const patientsGrid =
-        <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
-            {patients.map(patient => (
-                <Col key={patient._id}>
-                    <Patient key={patient._id} caller="doctor"
-                        patient={patient}
-                        className={styles.note}
-                        onPatientClicked={setPatientToEdit}
-                        onDeletePatientClicked={deletePatient}
-                    />
-                </Col>
-            ))}
-        </Row>
+        <>
+            <div className={styles.searchContainer}>
+            <input
+                type="text"
+                placeholder="Search patients"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+            />
+            <MdSearch className={styles.searchIcon} />
+            </div>
+            <br/>
+            
+            <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
+                {patients.filter((patient) =>
+                    `${patient.name} ${patient.cnp}`
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()))
+                    .map(patient => (
+                        <Col key={patient._id}>
+                            <Patient key={patient._id} caller="doctor"
+                                patient={patient}
+                                className={styles.note}
+                                onPatientClicked={setPatientToEdit}
+                                onDeletePatientClicked={deletePatient}
+                            />
+                        </Col>
+                    ))}
+            </Row>
+        </>
 
     return (
         <>
@@ -82,8 +102,8 @@ const DoctorPageLoggedInView = () => {
                     patientToEdit={patientToEdit}
                     onDismiss={() => setPatientToEdit(null)}
                     onPatientSaved={(updatedPatient) => {
-                        setPatients(patients.map(existingPatient => existingPatient._id === 
-                                            updatedPatient._id ? updatedPatient : existingPatient));
+                        setPatients(patients.map(existingPatient => existingPatient._id ===
+                            updatedPatient._id ? updatedPatient : existingPatient));
                         setPatientToEdit(null);
                     }}
                 />

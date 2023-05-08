@@ -7,6 +7,7 @@ import styles from "../styles/NotesPage.module.css";
 import styleUtils from "../styles/utils.module.css";
 import AddEditPatientDialog from "./AddEditPatientDialog";
 import Patient from './Patient';
+import { MdSearch } from "react-icons/md";
 
 const AssistantPageLoggedIn = () => {
 
@@ -16,6 +17,8 @@ const AssistantPageLoggedIn = () => {
 
     const [showAddPatientDialog, setShowAddPatientDialog] = useState(false);
     const [patientToEdit, setPatientToEdit] = useState<PatientModel | null>(null);
+
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         async function loadPatient() {
@@ -34,11 +37,15 @@ const AssistantPageLoggedIn = () => {
         loadPatient();
     }, []);
 
-    async function deletePatient(patient: PatientModel) {}
+    async function deletePatient(patient: PatientModel) { }
 
     const patientsGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
-            {patients.map(patient => (
+            {patients.filter((patient) =>
+                `${patient.name} ${patient.cnp}`
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()))
+                .map(patient => (
                 <Col key={patient._id}>
                     <Patient key={patient._id} caller="assistant"
                         patient={patient}
@@ -52,6 +59,17 @@ const AssistantPageLoggedIn = () => {
 
     return (
         <>
+
+            <div className={styles.searchContainer}>
+            <input
+                type="text"
+                placeholder="Search patients"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+            />
+            <MdSearch className={styles.searchIcon} />
+            </div>
+
             <Button
                 className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
                 onClick={() => setShowAddPatientDialog(true)}>
@@ -82,8 +100,8 @@ const AssistantPageLoggedIn = () => {
                     patientToEdit={patientToEdit}
                     onDismiss={() => setPatientToEdit(null)}
                     onPatientSaved={(updatedPatient) => {
-                        setPatients(patients.map(existingPatient => existingPatient._id === 
-                                            updatedPatient._id ? updatedPatient : existingPatient));
+                        setPatients(patients.map(existingPatient => existingPatient._id ===
+                            updatedPatient._id ? updatedPatient : existingPatient));
                         setPatientToEdit(null);
                     }}
                 />
