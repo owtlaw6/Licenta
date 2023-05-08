@@ -88,6 +88,10 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
             throw createHttpError(400, "Patient must have a CNP");
         }
 
+        if (cnp.length !== 13 || !(/^[0-9]+$/.test(cnp))) {
+            throw createHttpError(400, "Wrong CNP");
+        }
+
         if (!doctors) {
             throw createHttpError(400, "Patient must have a doctor");
         }
@@ -138,6 +142,10 @@ async (req, res, next) => {
         
         if (!newCnp) {
             throw createHttpError(400, "Patient must have a CNP");
+        }
+
+        if (newCnp.length !== 13 || !(/^[0-9]+$/.test(newCnp))) {
+            throw createHttpError(400, "Wrong CNP");
         }
 
         if (!newDoctors) {
