@@ -34,21 +34,13 @@ const AssistantPageLoggedIn = () => {
         loadPatient();
     }, []);
 
-    async function deletePatient(patient: PatientModel) {
-        try {
-            await PatientsApi.deletePatient(patient._id);
-            setPatients(patients.filter(existingPatient => existingPatient._id !== patient._id));
-        } catch (error) {
-            console.error(error);
-            alert(error);
-        }
-    }
+    async function deletePatient(patient: PatientModel) {}
 
     const patientsGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
             {patients.map(patient => (
                 <Col key={patient._id}>
-                    <Patient
+                    <Patient key={patient._id} caller="assistant"
                         patient={patient}
                         className={styles.note}
                         onPatientClicked={setPatientToEdit}
@@ -77,7 +69,7 @@ const AssistantPageLoggedIn = () => {
                 </>
             }
             {showAddPatientDialog &&
-                <AddEditPatientDialog
+                <AddEditPatientDialog caller="assistant"
                     onDismiss={() => setShowAddPatientDialog(false)}
                     onPatientSaved={(newPatient) => {
                         setPatients([...patients, newPatient]);
@@ -86,7 +78,7 @@ const AssistantPageLoggedIn = () => {
                 />
             }
             {patientToEdit &&
-                <AddEditPatientDialog
+                <AddEditPatientDialog caller="assistant"
                     patientToEdit={patientToEdit}
                     onDismiss={() => setPatientToEdit(null)}
                     onPatientSaved={(updatedPatient) => {

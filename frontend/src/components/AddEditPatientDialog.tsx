@@ -17,9 +17,10 @@ interface AddEditPatientDialogProps {
     patientToEdit?: Patient,
     onDismiss: () => void,
     onPatientSaved: (patient: Patient) => void,
+    caller: string,
 }
 
-const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEditPatientDialogProps) => {
+const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}: AddEditPatientDialogProps) => {
 
     const [selectedDoctors, setSelectedDoctors] = useState<string[]>(patientToEdit?.doctors || []);
 
@@ -61,7 +62,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
 
             <Modal.Body>
                 <Form id="addEditPatientForm" onSubmit={handleSubmit(onSubmit)}>
-                    <TextInputField
+                    <TextInputField readOnly={caller === 'doctor'}
                         name="name"
                         label="Name"
                         type="text"
@@ -70,7 +71,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved}: AddEdi
                         registerOptions={{ required: "Required" }}
                         error={errors.name}
                     />
-                    <TextInputField
+                    <TextInputField readOnly={caller === 'doctor'}
                         name="cnp"
                         label="Cnp"
                         type="text"

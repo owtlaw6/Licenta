@@ -46,7 +46,7 @@ const DoctorPageLoggedInView = () => {
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
             {patients.map(patient => (
                 <Col key={patient._id}>
-                    <Patient
+                    <Patient key={patient._id} caller="doctor"
                         patient={patient}
                         className={styles.note}
                         onPatientClicked={setPatientToEdit}
@@ -69,7 +69,7 @@ const DoctorPageLoggedInView = () => {
                 </>
             }
             {showPatientDialog &&
-                <AddEditPatientDialog
+                <AddEditPatientDialog caller="doctor"
                     onDismiss={() => setShowPatientDialog(false)}
                     onPatientSaved={(newPatient) => {
                         setPatients([...patients, newPatient]);
@@ -78,7 +78,7 @@ const DoctorPageLoggedInView = () => {
                 />
             }
             {patientToEdit &&
-                <AddEditPatientDialog
+                <AddEditPatientDialog caller="doctor"
                     patientToEdit={patientToEdit}
                     onDismiss={() => setPatientToEdit(null)}
                     onPatientSaved={(updatedPatient) => {

@@ -12,9 +12,10 @@ interface PatientProps {
     onPatientClicked: (patient: PatientModel) => void,
     onDeletePatientClicked: (patient: PatientModel) => void,
     className?: string,
+    caller: string,
 }
 
-const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }: PatientProps) => {
+const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, caller }: PatientProps) => {
     const {
         name,
         cnp,
@@ -60,13 +61,16 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className }
             <Card.Body className={styles.cardBody}>
                 <Card.Title className={styleUtils.flexCenter}>
                     {name}
-                    <MdDelete
-                        className="text-muted ms-auto"
-                        onClick={(e) => {
-                            onDeletePatientClicked(patient);
-                            e.stopPropagation();
-                        }}
-                    />
+                    {caller === 'assistant' && (
+                        <MdDelete
+                            className="text-muted ms-auto"
+                            onClick={(e) => {
+                                onDeletePatientClicked(patient);
+                                e.stopPropagation();
+                            }}
+                        />
+                    )}
+                    
                 </Card.Title>
                 <Card.Title className={styleUtils.flexCenter}>
                     {cnp}
