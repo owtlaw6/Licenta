@@ -25,7 +25,9 @@ export const getPatients: RequestHandler = async (req, res, next) => {
                     $in: [authenticatedUserId],
                 },
             }).exec();
-
+            res.status(200).json(patient);
+        } else if (authenticatedUser.role === "Technician") {
+            const patient = await PatientModel.find().exec();
             res.status(200).json(patient);
         } else {
             throw createHttpError(403, "You don't have permission to perform this action");

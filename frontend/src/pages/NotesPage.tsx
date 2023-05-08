@@ -1,5 +1,5 @@
 import { Container } from "react-bootstrap";
-import NotesPageLoggedInView from "../components/NotesPageLoggedInView";
+import TechnicianPageLoggedInView from "../components/TechnicianPageLoggedInView";
 import NotesPageLoggedOutView from "../components/NotesPageLoggedOutView";
 import AdminPageLoggedInView from "../components/AdminRequestList"
 import { User } from "../models/user";
@@ -24,7 +24,7 @@ const NotesPage = ({ loggedInUser }: NotesPageProps) => {
                 {
                     loggedInUser
                     ? (loggedInUser.role === "Technician")
-                        ? <NotesPageLoggedInView />
+                        ? <TechnicianPageLoggedInView />
                         : (loggedInUser.role === "Doctor") 
                             ? <DoctorPageLoggedInView />
                             : (loggedInUser.role === "Assistant") 

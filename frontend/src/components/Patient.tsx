@@ -62,7 +62,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
                 <Card.Body className={styles.cardBody}>
                     <Card.Title className={styleUtils.flexCenter}>
                         {name}
-                        {caller === 'assistant' && (
+                        {(caller === 'assistant') && (
                             <MdDelete
                                 className="text-muted ms-auto"
                                 onClick={(e) => {

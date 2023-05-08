@@ -62,7 +62,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
 
             <Modal.Body>
                 <Form id="addEditPatientForm" onSubmit={handleSubmit(onSubmit)}>
-                    <TextInputField readOnly={caller === 'doctor'}
+                    <TextInputField readOnly={caller !== 'assistant'}
                         name="name"
                         label="Name"
                         type="text"
@@ -71,7 +71,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                         registerOptions={{ required: "Required" }}
                         error={errors.name}
                     />
-                    <TextInputField readOnly={caller === 'doctor'}
+                    <TextInputField readOnly={caller !== 'assistant'}
                         name="cnp"
                         label="Cnp"
                         type="text"
