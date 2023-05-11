@@ -10,7 +10,6 @@ import Patient from './Patient';
 import { MdSearch } from "react-icons/md";
 
 const AssistantPageLoggedIn = () => {
-
     const [patients, setPatients] = useState<PatientModel[]>([]);
     const [patientsLoading, setPatientsLoading] = useState(true);
     const [showPatientsLoadingError, setShowPatientsLoadingError] = useState(false);
@@ -59,7 +58,6 @@ const AssistantPageLoggedIn = () => {
 
     return (
         <>
-
             <div className={styles.searchContainer}>
             <input
                 type="text"
