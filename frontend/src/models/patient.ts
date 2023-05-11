@@ -4,6 +4,7 @@ export interface Patient{
     cnp: string,
     doctors: string[],
     description: string,
+    ct: string,
     createdAt: string,
     updatedAt: string,
 }

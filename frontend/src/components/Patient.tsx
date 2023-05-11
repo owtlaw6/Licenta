@@ -21,6 +21,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
         cnp,
         doctors,
         description,
+        ct,
         createdAt,
         updatedAt
     } = patient;
@@ -81,6 +82,9 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
                     </Card.Title>
                     <Card.Title className={styles.cardText}>
                         {description}
+                    </Card.Title>
+                    <Card.Title className={styles.cardText}>
+                        {ct}
                     </Card.Title>
                 </Card.Body>
                 <Card.Footer className="text-muted">

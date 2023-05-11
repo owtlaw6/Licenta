@@ -68,10 +68,11 @@ interface CreatePatientBody {
     cnp?: string,
     doctors?: string[],
     description?: string,
+    ct?: string,
 }
 
 export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, unknown> = async (req, res, next) => {
-    const {name, cnp, doctors, description} = req.body
+    const {name, cnp, doctors, description, ct} = req.body
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -104,6 +105,7 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
             cnp: cnp,
             doctors: doctors,
             description: description,
+            ct: ct,
         });
 
         res.status(201).json(newPatient);
@@ -121,6 +123,7 @@ interface UpdatePatientBody {
     cnp?: string,
     doctors?: string[],
     description?: string,
+    ct?: string,
 }
 
 export const updatePatient: RequestHandler<UpdatePatientParams, unknown, UpdatePatientBody, unknown> = 
@@ -130,6 +133,7 @@ async (req, res, next) => {
     const newCnp = req.body.cnp;
     const newDoctors = req.body.doctors;
     const newDescription = req.body.description;
+    const newCt = req.body.ct;
     const authenticatedUserId = req.session.userId;
 
     try {
@@ -161,6 +165,7 @@ async (req, res, next) => {
             cnp: newCnp,
             doctors: newDoctors,
             description: newDescription,
+            ct: newCt,
         };
 
         const options = { new: true };

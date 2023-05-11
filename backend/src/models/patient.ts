@@ -5,6 +5,7 @@ const patientSchema = new Schema({
     cnp: { type: String, required: true, unique: true },
     doctors: [{type: Schema.Types.ObjectId, ref: 'User'}],
     description: { type: String, required: false },
+    ct: { type: String, required: false },
 }, { timestamps: true });
 
 type Patient = InferSchemaType<typeof patientSchema>  & { _id: ObjectId };

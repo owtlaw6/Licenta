@@ -11,6 +11,7 @@ interface PatientInput {
     cnp: string,
     doctors: string[],
     description: string,
+    ct: string,
 }
 
 interface AddEditPatientDialogProps {
@@ -33,6 +34,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",
             description: patientToEdit?.description || "",
+            ct: patientToEdit?.ct || "",
         }
     });
 
@@ -79,7 +81,6 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                         register={register}
                         registerOptions={{ required: "Required" }}
                         error={errors.cnp}
-                        
                     />
 
                     <form>
@@ -98,6 +99,16 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                         placeholder="Description"
                         register={register}
                         error={errors.description}
+                    />
+
+                    <TextInputField
+                        name="ct"
+                        label="Ct"
+                        type="text"
+                        placeholder="Ct"
+                        register={register}
+                        registerOptions={{ required: "Required" }}
+                        error={errors.ct} 
                     />
                 </Form>
             </Modal.Body>
