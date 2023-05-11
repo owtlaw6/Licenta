@@ -133,6 +133,7 @@ export const logout: RequestHandler = (req, res, next) => {
 export const getAllUsers: RequestHandler = async (req, res, next) => {
     try {
         const users = await UserModel.find().exec();
+        console.log(users);
         res.status(200).json(users);
     } catch (error) {
         next(error);
@@ -198,7 +199,7 @@ export const createUser: RequestHandler<unknown, unknown, CreateUserBody, unknow
         }
 
         if (!passwordRaw) {
-            throw createHttpError(400, "User must have a email");
+            throw createHttpError(400, "User must have a password");
         }
 
         if (!role) {

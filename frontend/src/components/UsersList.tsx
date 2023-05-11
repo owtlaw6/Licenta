@@ -25,7 +25,7 @@ const UsersList = () => {
                 setShowUsersLoadingError(false);
                 setUsersLoading(true);
                 const users = await UsersApi.fetchUsers();
-                console.log("random" + users);
+                //console.log(users)
                 setUsers(users);
             } catch (error) {
                 console.error(error);

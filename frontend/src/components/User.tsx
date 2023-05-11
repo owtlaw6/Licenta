@@ -39,7 +39,7 @@ const User = ({user, onUserClicked, onDeleteUserClicked, className, caller }: Us
                         
                     </Card.Title>
                     <Card.Title className={styleUtils.flexCenter}>
-                        {email}
+                        {email ? email : "cevaaaa"}
                     </Card.Title>
                     <Card.Title className={styleUtils.flexCenter}>
                         {role}
