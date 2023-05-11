@@ -9,6 +9,7 @@ import styleButtons from "../styles/signUpButtons.module.css";
 interface UserInput {
     username: string,
     email: string,
+    password: string,
     role: string,
 }
 
@@ -36,6 +37,8 @@ const AddEditUserDialog = ({userToEdit, onDismiss, onUserSaved, caller}: AddEdit
 
     async function onSubmit(input: UserInput){
         try {
+            input.role = selectedRole;
+
             let userResponse: User;
             if(userToEdit){
                 userResponse = await UsersApi.updateUser(userToEdit._id, input);
@@ -76,8 +79,17 @@ const AddEditUserDialog = ({userToEdit, onDismiss, onUserSaved, caller}: AddEdit
                         register={register}
                         registerOptions={{ required: "Required" }}
                         error={errors.email}
-                        
                     />
+                    {userToEdit ? "" :
+                        <TextInputField
+                            name="password"
+                            label="Password"
+                            type="password"
+                            placeholder="Password"
+                            register={register}
+                            registerOptions={{ required: "Required" }}
+                            error={errors.password}
+                    />}
 
                     <Row xs={1} md={2} xl={4} className={`g-4 ${styleButtons.buttonsGrid}`}>
                         <div>
