@@ -21,8 +21,6 @@ interface AddEditUserDialogProps {
 }
 
 const AddEditUserDialog = ({userToEdit, onDismiss, onUserSaved, caller}: AddEditUserDialogProps) => {
-    const [selectedRole, setSelectedRole] = useState<string>("");
-
     const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<UserInput>({
         defaultValues:{
             username: userToEdit?.username || "",
@@ -30,6 +28,8 @@ const AddEditUserDialog = ({userToEdit, onDismiss, onUserSaved, caller}: AddEdit
             role: userToEdit?.role || "",
         }
     });
+    
+    const [selectedRole, setSelectedRole] = useState<string>(userToEdit ? userToEdit.role : "");
 
     const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedRole(e.target.value);

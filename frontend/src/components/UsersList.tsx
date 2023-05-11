@@ -37,7 +37,15 @@ const UsersList = () => {
         loadUser();
     }, []);
 
-    async function deleteUser(user: UserModel) { }
+    async function deleteUser(user: UserModel) {
+        try {
+            await UsersApi.deleteUser(user._id);
+            setUsers(users.filter(existingUser => existingUser._id !== user._id));
+        } catch (error) {
+            console.error(error);
+            alert(error);
+        }
+    }
 
     const usersGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
