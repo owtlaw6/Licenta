@@ -20,6 +20,7 @@ const DoctorPageLoggedInView = () => {
     const [searchText, setSearchText] = useState("");
 
     const [page, setPage] = useState("listView");
+    const [patientToView, setPatientToView] = useState<PatientModel>();
 
     const goBackToListView = () => setPage("listView");
 
@@ -54,6 +55,7 @@ const DoctorPageLoggedInView = () => {
         try {
             await PatientsApi.viewPatient(patient._id);
             setPage("expandedView");
+            setPatientToView(patient);
         } catch (error) {
             console.error(error);
             alert(error);
@@ -125,7 +127,12 @@ const DoctorPageLoggedInView = () => {
                     }}
                 />
             }
-        </>: <ViewPatient goBack={goBackToListView} /> } {/* pass the function here */}
+        </>: patientToView ? (
+            <ViewPatient key={patientToView._id} 
+                patient={patientToView}
+                goBack={goBackToListView} 
+            />
+        ) : null }
         </>
     );
 }
