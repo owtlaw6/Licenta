@@ -1,6 +1,9 @@
 import { Button, Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
+import { useDropzone } from 'react-dropzone';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface FileUploadDialogProps {
     onDismiss: () => void,
@@ -10,11 +13,11 @@ interface FileUploadDialogProps {
 const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps) => {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setSelectedFiles(Array.from(e.target.files));
-        }
-    };
+    const onDrop = useCallback((acceptedFiles: File[]) => {
+        setSelectedFiles(acceptedFiles);
+    }, []);
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop});
 
     const handleFileUpload = async () => {
         const formData = new FormData();
@@ -30,6 +33,7 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
             });
             console.log(response.data);
             onFilesUploaded(selectedFiles);
+            toast.success("Upload successfully!");
         } catch (error) {
             console.error('Error uploading files:', error);
         }
@@ -42,7 +46,14 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
                     <Modal.Title>Add CT</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <input type="file" multiple onChange={handleFileChange} />
+                    <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        {
+                            isDragActive ?
+                            <p>Drop the files here ...</p> :
+                            <p>Drag 'n' drop some files here, or click to select files</p>
+                        }
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleFileUpload}>Upload</Button>

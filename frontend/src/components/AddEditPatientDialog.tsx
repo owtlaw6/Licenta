@@ -6,6 +6,8 @@ import * as PatientsApi from "../network/patients_api"
 import DoctorSelect from "./DoctorSelect";
 import { useState } from "react";
 import FileUploadDialog from "./FileUploadDialog";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface PatientInput {
     name: string,
@@ -37,7 +39,6 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
 
     const handleFilesUploaded = (files: File[]) => {
         setShowFileUploadDialog(false);
-        // TODO: Handle the uploaded files here.
     };
 
     const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
@@ -65,6 +66,8 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
     }
 
     return (
+        <>
+        <ToastContainer />
         <Modal show onHide={onDismiss}>
             <Modal.Header closeButton>
                 <Modal.Title>
@@ -117,7 +120,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
             <Modal.Footer>
                 {caller === 'technician' 
                     ? <>
-                            {showFileUploadDialog && 
+                            {showFileUploadDialog &&
                                 <FileUploadDialog onDismiss={() => setShowFileUploadDialog(false)} 
                                     onFilesUploaded={handleFilesUploaded} />
                             }
@@ -140,6 +143,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                 
             </Modal.Footer>
         </Modal>
+        </>
     );
 }
  

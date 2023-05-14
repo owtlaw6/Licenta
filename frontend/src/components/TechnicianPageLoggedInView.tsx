@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, Row, Spinner } from "react-bootstrap";
+import { Col, Row, Spinner } from "react-bootstrap";
 import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
