@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import styleUtils from "../styles/utils.module.css";
 
 interface FileUploadDialogProps {
     onDismiss: () => void,
@@ -14,7 +15,7 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
-        setSelectedFiles(acceptedFiles);
+        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...acceptedFiles]);
     }, []);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop});
@@ -41,7 +42,7 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
 
     return (
         <>
-            <Modal show onHide={onDismiss}>
+            <Modal show onHide={onDismiss} className={styleUtils.fileUploadDialog}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add CT</Modal.Title>
                 </Modal.Header>
@@ -51,12 +52,22 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
                         {
                             isDragActive ?
                             <p>Drop the files here ...</p> :
-                            <p>Drag 'n' drop some files here, or click to select files</p>
+                            <p>Drag and drop some files here, or click to select files</p>
                         }
+                    </div>
+                    <div>
+                        <h5>Selected Files:</h5>
+                        <ul>
+                            {selectedFiles.map((file, index) => (
+                                <li key={index}>{file.name}</li>
+                            ))}
+                        </ul>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleFileUpload}>Upload</Button>
+                    <Button onClick={handleFileUpload} disabled={selectedFiles.length === 0}>
+                        Upload
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </>

@@ -14,3 +14,7 @@
 .width100 {
     width: 100%;
 }
+
+.fileUploadDialog {
+    background-color: #f1f1f1; /* Replace with your desired background color */
+}
