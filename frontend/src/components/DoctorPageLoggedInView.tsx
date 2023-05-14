@@ -6,6 +6,7 @@ import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
 import { MdSearch } from "react-icons/md";
+import ViewPatient from './ViewPatient';
 
 const DoctorPageLoggedInView = () => {
 
@@ -17,6 +18,8 @@ const DoctorPageLoggedInView = () => {
     const [patientToEdit, setPatientToEdit] = useState<PatientModel | null>(null);
 
     const [searchText, setSearchText] = useState("");
+
+    const [page, setPage] = useState("listView");
 
     useEffect(() => {
         async function loadPatient() {
@@ -39,6 +42,16 @@ const DoctorPageLoggedInView = () => {
         try {
             await PatientsApi.deletePatient(patient._id);
             setPatients(patients.filter(existingPatient => existingPatient._id !== patient._id));
+        } catch (error) {
+            console.error(error);
+            alert(error);
+        }
+    }
+
+    async function expandPatient(patient: PatientModel) { 
+        try {
+            await PatientsApi.viewPatient(patient._id);
+            setPage("expandedView");
         } catch (error) {
             console.error(error);
             alert(error);
@@ -70,6 +83,7 @@ const DoctorPageLoggedInView = () => {
                                 className={styles.note}
                                 onPatientClicked={setPatientToEdit}
                                 onDeletePatientClicked={deletePatient}
+                                onExpand={expandPatient}
                             />
                         </Col>
                     ))}
@@ -77,7 +91,8 @@ const DoctorPageLoggedInView = () => {
         </>
 
     return (
-        <>
+        <>  
+        {page === "listView" ? <>
             {patientsLoading && <Spinner animation='border' variant='primary' />}
             {showPatientsLoadingError && <p>Something went wrong. Please refresh the page.</p>}
             {!patientsLoading && !showPatientsLoadingError &&
@@ -108,6 +123,7 @@ const DoctorPageLoggedInView = () => {
                     }}
                 />
             }
+        </>: <ViewPatient /> }
         </>
     );
 }

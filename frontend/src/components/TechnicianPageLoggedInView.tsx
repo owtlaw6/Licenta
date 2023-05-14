@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
 import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
-import styleUtils from "../styles/utils.module.css";
 import AddEditPatientDialog from "./AddEditPatientDialog";
 import Patient from './Patient';
 import { MdSearch } from "react-icons/md";

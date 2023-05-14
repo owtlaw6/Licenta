@@ -4,18 +4,21 @@ import { Card } from "react-bootstrap";
 import { Patient as PatientModel } from "../models/patient";
 import { formatDate } from "../utils/formatDate";
 import { MdDelete } from "react-icons/md";
+import { GrExpand } from "react-icons/gr";
 import React, { useState, useEffect } from "react";
 import { fetchDoctors, Doctor } from "../network/general_api";
+import { useNavigate } from 'react-router-dom';
 
 interface PatientProps {
     patient: PatientModel,
     onPatientClicked: (patient: PatientModel) => void,
     onDeletePatientClicked: (patient: PatientModel) => void,
+    onExpand?: (patient: PatientModel) => void,
     className?: string,
     caller: string,
 }
 
-const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, caller }: PatientProps) => {
+const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, className, caller }: PatientProps) => {
     const {
         name,
         cnp,
@@ -27,6 +30,8 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
     } = patient;
 
     const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getDoctors = async () => {
@@ -68,6 +73,15 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, className, 
                                 className="text-muted ms-auto"
                                 onClick={(e) => {
                                     onDeletePatientClicked(patient);
+                                    e.stopPropagation();
+                                }}
+                            />
+                        )}
+                        {(caller === 'doctor') && (
+                            <GrExpand
+                                className="text-muted ms-auto"
+                                onClick={(e) => {
+                                    onExpand ? onExpand(patient) : e.stopPropagation();
                                     e.stopPropagation();
                                 }}
                             />

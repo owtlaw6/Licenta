@@ -64,3 +64,7 @@ export async function updatePatient(patientId: string, patient: PatientInput): P
 export async function deletePatient(patientId: string) {
     await fetchData("/api/patients/" + patientId, { method: "DELETE" });
 }
+
+export async function viewPatient(patientId: string) {
+    await fetchData("/api/patients/view-patient/" + patientId, { method: "GET" });
+}

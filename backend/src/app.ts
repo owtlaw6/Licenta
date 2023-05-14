@@ -36,7 +36,7 @@ app.use("/api/requests", requiresAuth, requestsRoutes);
 app.use("/api/patients", requiresAuth, patientsRoutes);
 
 app.use((req, res, next) => {
-    next(createHttpError(404, "Endpoint not found"));
+    next(createHttpError(404, "Endpoint not found!"));
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
