@@ -34,7 +34,6 @@ export interface PatientInput {
     cnp: string,
     doctors: string[],
     description: string,
-    ct: string,
 }
 
 export async function createPatient(patient: PatientInput): Promise<Patient> {

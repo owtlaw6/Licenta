@@ -7,7 +7,6 @@ import { MdDelete } from "react-icons/md";
 import { GrExpand } from "react-icons/gr";
 import React, { useState, useEffect } from "react";
 import { fetchDoctors, Doctor } from "../network/general_api";
-import { useNavigate } from 'react-router-dom';
 
 interface PatientProps {
     patient: PatientModel,
@@ -24,7 +23,6 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
         cnp,
         doctors,
         description,
-        ct,
         createdAt,
         updatedAt
     } = patient;
@@ -94,9 +92,6 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
                     </Card.Title>
                     <Card.Title className={styles.cardText}>
                         {description}
-                    </Card.Title>
-                    <Card.Title className={styles.cardText}>
-                        {ct}
                     </Card.Title>
                 </Card.Body>
                 <Card.Footer className="text-muted">
