@@ -5,6 +5,7 @@ import TextInputField from "./form/TextInputField";
 import * as PatientsApi from "../network/patients_api"
 import DoctorSelect from "./DoctorSelect";
 import { useState } from "react";
+import FileUploadDialog from "./FileUploadDialog";
 
 interface PatientInput {
     name: string,
@@ -24,8 +25,19 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
 
     const [selectedDoctors, setSelectedDoctors] = useState<string[]>(patientToEdit?.doctors || []);
 
+    const [showFileUploadDialog, setShowFileUploadDialog] = useState(false);
+
     const handleDoctorChange = (selectedOptions: string[]) => {
         setSelectedDoctors(selectedOptions);
+    };
+
+    const handleAddCT = () => {
+        setShowFileUploadDialog(true);
+    };
+
+    const handleFilesUploaded = (files: File[]) => {
+        setShowFileUploadDialog(false);
+        // TODO: Handle the uploaded files here.
     };
 
     const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
@@ -103,6 +115,21 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
             </Modal.Body>
 
             <Modal.Footer>
+                {caller === 'technician' 
+                    ? <>
+                            {showFileUploadDialog && 
+                                <FileUploadDialog onDismiss={() => setShowFileUploadDialog(false)} 
+                                    onFilesUploaded={handleFilesUploaded} />
+                            }
+                            <Button
+                                onClick={handleAddCT}
+                                disabled={isSubmitting}
+                            >
+                                Add CT
+                            </Button>
+                        </>
+                    : <></>
+                }
                 <Button
                     type="submit"
                     form="addEditPatientForm"
@@ -110,6 +137,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                 >
                     Save
                 </Button>
+                
             </Modal.Footer>
         </Modal>
     );
