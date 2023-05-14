@@ -31,8 +31,6 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
 
     const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         const getDoctors = async () => {
             const fetchedDoctors = await fetchDoctors();

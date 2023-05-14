@@ -21,6 +21,8 @@ const DoctorPageLoggedInView = () => {
 
     const [page, setPage] = useState("listView");
 
+    const goBackToListView = () => setPage("listView");
+
     useEffect(() => {
         async function loadPatient() {
             try {
@@ -123,7 +125,7 @@ const DoctorPageLoggedInView = () => {
                     }}
                 />
             }
-        </>: <ViewPatient /> }
+        </>: <ViewPatient goBack={goBackToListView} /> } {/* pass the function here */}
         </>
     );
 }
