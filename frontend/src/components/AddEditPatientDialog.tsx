@@ -41,7 +41,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
         setShowFileUploadDialog(false);
     };
 
-    const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
+    const { register, handleSubmit, formState : {errors, isSubmitting}, watch } = useForm<PatientInput>({
         defaultValues:{
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",
@@ -122,7 +122,8 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
                     ? <>
                             {showFileUploadDialog &&
                                 <FileUploadDialog onDismiss={() => setShowFileUploadDialog(false)} 
-                                    onFilesUploaded={handleFilesUploaded} />
+                                    onFilesUploaded={handleFilesUploaded}
+                                    patientCNP={watch('cnp')} />
                             }
                             <Button
                                 onClick={handleAddCT}

@@ -23,10 +23,9 @@ const ViewPatient: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         />
         <p>{name}</p>
         <p>{cnp}</p>
-        <p>{description}</p>
         <div style={{height: '80vh', width: '100vw', overflow: 'auto'}}>
         <iframe
-            src="http://192.168.101.18/"
+            src="http://192.168.101.18:8080/data"
             title="Dash App"
             width="100%"
             height="100%"

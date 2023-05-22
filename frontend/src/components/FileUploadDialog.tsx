@@ -9,9 +9,10 @@ import styleUtils from "../styles/utils.module.css";
 interface FileUploadDialogProps {
     onDismiss: () => void,
     onFilesUploaded: (files: File[]) => void,
+    patientCNP: string,
 }
 
-const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps) => {
+const FileUploadDialog = ({ onDismiss, onFilesUploaded, patientCNP }: FileUploadDialogProps) => {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -22,10 +23,13 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded }: FileUploadDialogProps)
 
     const handleFileUpload = async () => {
         const formData = new FormData();
+
+        formData.append('cnp', patientCNP);
+
         selectedFiles.forEach(file => {
             formData.append('file', file);
         });
-    
+        
         try {
             const response = await axios.post('/upload', formData, {
                 headers: {
