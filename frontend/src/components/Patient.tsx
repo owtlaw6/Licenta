@@ -1,12 +1,16 @@
 import styles from "../styles/Note.module.css";
 import styleUtils from "../styles/utils.module.css";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { Patient as PatientModel } from "../models/patient";
 import { formatDate } from "../utils/formatDate";
 import { MdDelete } from "react-icons/md";
 import { GrExpand } from "react-icons/gr";
 import React, { useState, useEffect } from "react";
 import { fetchDoctors, Doctor } from "../network/general_api";
+import FileUploadDialog from "./FileUploadDialog";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { FaPlus } from "react-icons/fa";
 
 interface PatientProps {
     patient: PatientModel,
@@ -28,6 +32,19 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
     } = patient;
 
     const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+
+    const [showFileUploadDialog, setShowFileUploadDialog] = useState(false);
+
+    const [filesUploaded, setFilesUploaded] = useState<File[]>([]);
+
+    const handleAddCT = () => {
+        setShowFileUploadDialog(true);
+    };
+
+    const handleFilesUploaded = (files: File[]) => {
+        setFilesUploaded(files);
+        setShowFileUploadDialog(false);
+    };
 
     useEffect(() => {
         const getDoctors = async () => {
@@ -58,9 +75,17 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
 
     return (
         <>
+            {showFileUploadDialog &&
+                <FileUploadDialog 
+                    onDismiss={() => setShowFileUploadDialog(false)} 
+                    onFilesUploaded={handleFilesUploaded}
+                    patientCNP={patient.cnp} 
+                />
+            }
             <Card
                 className={`${styles.noteCard} ${className}`}
                 onClick={() => onPatientClicked(patient)}>
+                
                 <Card.Body className={styles.cardBody}>
                     <Card.Title className={styleUtils.flexCenter}>
                         {name}
@@ -96,8 +121,19 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
                 </Card.Body>
                 <Card.Footer className="text-muted">
                     {createdUpdated}
+                    {caller === 'technician' && (
+                        <Button className={`${styleUtils.addButton}`}
+                            onClick={(e) => {
+                                handleAddCT();
+                                e.stopPropagation();
+                            }}
+                        >
+                            Add CT
+                        </Button>
+                    )}
                 </Card.Footer>
             </Card>
+            <ToastContainer />
         </>
     )
 }
