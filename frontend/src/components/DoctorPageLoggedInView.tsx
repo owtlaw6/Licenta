@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, Row, Spinner } from "react-bootstrap";
+import { Col, Row, Spinner } from "react-bootstrap";
 import styles from "../styles/NotesPage.module.css";
 import Patient from './Patient';
 import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
 import { MdSearch } from "react-icons/md";
-import ViewPatient from './ViewPatient';
+import ViewPatientCT from './ViewPatientCT';
+import ViewPatientData from './ViewPatientData';
 
 const DoctorPageLoggedInView = () => {
 
@@ -51,10 +52,21 @@ const DoctorPageLoggedInView = () => {
         }
     }
 
-    async function expandPatient(patient: PatientModel) { 
+    async function expandPatientCT(patient: PatientModel) { 
         try {
             await PatientsApi.viewPatient(patient._id);
-            setPage("expandedView");
+            setPage("expandedViewCT");
+            setPatientToView(patient);
+        } catch (error) {
+            console.error(error);
+            alert(error);
+        }
+    }
+
+    async function expandPatientData(patient: PatientModel) { 
+        try {
+            await PatientsApi.viewPatient(patient._id);
+            setPage("expandedViewData");
             setPatientToView(patient);
         } catch (error) {
             console.error(error);
@@ -87,7 +99,8 @@ const DoctorPageLoggedInView = () => {
                                 className={styles.note}
                                 onPatientClicked={setPatientToEdit}
                                 onDeletePatientClicked={deletePatient}
-                                onExpand={expandPatient}
+                                onExpand={expandPatientCT}
+                                onExpandData={expandPatientData}
                             />
                         </Col>
                     ))}
@@ -127,8 +140,13 @@ const DoctorPageLoggedInView = () => {
                     }}
                 />
             }
-        </>: patientToView ? (
-            <ViewPatient key={patientToView._id} 
+        </>: patientToView && page === "expandedViewCT" ? (
+            <ViewPatientCT key={patientToView._id} 
+                patient={patientToView}
+                goBack={goBackToListView} 
+            />
+        ) : patientToView && page === "expandedViewData" ? (
+            <ViewPatientData key={patientToView._id} 
                 patient={patientToView}
                 goBack={goBackToListView} 
             />

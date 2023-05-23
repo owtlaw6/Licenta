@@ -28,6 +28,15 @@
     padding: 3px 3px;
 }
 
+.addTopButton {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    padding: 3px 3px;
+}
+
 .color {
     background-color: #ffb31a;
 }

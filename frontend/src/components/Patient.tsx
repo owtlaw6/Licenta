@@ -4,7 +4,6 @@ import { Button, Card } from "react-bootstrap";
 import { Patient as PatientModel } from "../models/patient";
 import { formatDate } from "../utils/formatDate";
 import { MdDelete } from "react-icons/md";
-import { GrExpand } from "react-icons/gr";
 import React, { useState, useEffect } from "react";
 import { fetchDoctors, Doctor } from "../network/general_api";
 import FileUploadDialog from "./FileUploadDialog";
@@ -16,11 +15,12 @@ interface PatientProps {
     onPatientClicked: (patient: PatientModel) => void,
     onDeletePatientClicked: (patient: PatientModel) => void,
     onExpand?: (patient: PatientModel) => void,
+    onExpandData?: (patient: PatientModel) => void,
     className?: string,
     caller: string,
 }
 
-const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, className, caller }: PatientProps) => {
+const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, onExpandData, className, caller }: PatientProps) => {
     const {
         name,
         cnp,
@@ -85,7 +85,6 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
             <Card
                 className={`${styles.noteCard} ${className}`}
                 onClick={() => onPatientClicked(patient)}>
-                
                 <Card.Body className={styles.cardBody}>
                     <Card.Title className={styleUtils.flexCenter}>
                         {name}
@@ -99,15 +98,15 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
                             />
                         )}
                         {(caller === 'doctor') && (
-                            <GrExpand
-                                className="text-muted ms-auto"
+                            <Button className={`${styleUtils.addTopButton}`}
                                 onClick={(e) => {
                                     onExpand ? onExpand(patient) : e.stopPropagation();
                                     e.stopPropagation();
                                 }}
-                            />
+                            >
+                                View CT
+                            </Button>
                         )}
-                        
                     </Card.Title>
                     <Card.Title className={styleUtils.flexCenter}>
                         {cnp}
@@ -129,6 +128,16 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
                             }}
                         >
                             Add CT
+                        </Button>
+                    )}
+                    {caller === 'doctor' && (
+                        <Button className={`${styleUtils.addButton}`}
+                            onClick={(e) => {
+                                onExpandData ? onExpandData(patient) : e.stopPropagation();
+                                e.stopPropagation();
+                            }}
+                        >
+                            View Data
                         </Button>
                     )}
                 </Card.Footer>

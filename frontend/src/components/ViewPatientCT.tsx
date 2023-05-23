@@ -7,7 +7,7 @@ interface ViewPatientProps {
     goBack: () => void;
 }
 
-const ViewPatient: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
+const ViewPatientCT: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
     const {
         name,
         cnp,
@@ -36,4 +36,4 @@ const ViewPatient: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
   );
 };
 
-export default ViewPatient;
+export default ViewPatientCT;
