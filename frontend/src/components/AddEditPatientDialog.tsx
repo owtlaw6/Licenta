@@ -30,7 +30,7 @@ const AddEditPatientDialog = ({patientToEdit, onDismiss, onPatientSaved, caller}
         setSelectedDoctors(selectedOptions);
     };
 
-    const { register, handleSubmit, formState : {errors, isSubmitting}, watch } = useForm<PatientInput>({
+    const { register, handleSubmit, formState : {errors, isSubmitting} } = useForm<PatientInput>({
         defaultValues:{
             name: patientToEdit?.name || "",
             cnp: patientToEdit?.cnp || "",

@@ -10,7 +10,6 @@ import { fetchDoctors, Doctor } from "../network/general_api";
 import FileUploadDialog from "./FileUploadDialog";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import { FaPlus } from "react-icons/fa";
 
 interface PatientProps {
     patient: PatientModel,
@@ -35,6 +34,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, c
 
     const [showFileUploadDialog, setShowFileUploadDialog] = useState(false);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [filesUploaded, setFilesUploaded] = useState<File[]>([]);
 
     const handleAddCT = () => {
