@@ -1,4 +1,5 @@
 import styles from "../styles/Note.module.css";
+import stylesButton from "../styles/adminButtons.module.css";
 import styleUtils from "../styles/utils.module.css";
 import { Button, Card } from "react-bootstrap";
 import { Patient as PatientModel } from "../models/patient";
@@ -18,9 +19,10 @@ interface PatientProps {
     onExpandData?: (patient: PatientModel) => void,
     className?: string,
     caller: string,
+    displayListGrid: string,
 }
 
-const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, onExpandData, className, caller }: PatientProps) => {
+const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, onExpandData, className, caller, displayListGrid }: PatientProps) => {
     const {
         name,
         cnp,
@@ -82,12 +84,84 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, o
                     patientCNP={patient.cnp} 
                 />
             }
-            <Card
-                className={`${styles.noteCard} ${className}`}
-                onClick={() => onPatientClicked(patient)}>
-                <Card.Body className={styles.cardBody}>
-                    <Card.Title className={styleUtils.flexCenter}>
+            { displayListGrid === "grid" && 
+                <Card
+                    className={`${styles.noteCard} ${className}`}
+                    onClick={() => onPatientClicked(patient)}>
+                    <Card.Body className={styles.cardBody}>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {name}
+                            {(caller === 'assistant') && (
+                                <MdDelete
+                                    className="text-muted ms-auto"
+                                    onClick={(e) => {
+                                        onDeletePatientClicked(patient);
+                                        e.stopPropagation();
+                                    }}
+                                />
+                            )}
+                            {(caller === 'doctor') && (
+                                <Button className={`${styleUtils.addTopButton}`}
+                                    onClick={(e) => {
+                                        onExpand ? onExpand(patient) : e.stopPropagation();
+                                        e.stopPropagation();
+                                    }}
+                                >
+                                    View CT
+                                </Button>
+                            )}
+                        </Card.Title>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {cnp}
+                        </Card.Title>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {doctorsNames}
+                        </Card.Title>
+                        <Card.Title className={styles.cardText}>
+                            {description}
+                        </Card.Title>
+                    </Card.Body>
+                    <Card.Footer className="text-muted">
+                        {createdUpdated}
+                        {caller === 'technician' && (
+                            <Button className={`${styleUtils.addButton}`}
+                                onClick={(e) => {
+                                    handleAddCT();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                Add CT
+                            </Button>
+                        )}
+                        {caller === 'doctor' && (
+                            <Button className={`${styleUtils.addButton}`}
+                                onClick={(e) => {
+                                    onExpandData ? onExpandData(patient) : e.stopPropagation();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                View Data
+                            </Button>
+                        )}
+                    </Card.Footer>
+                </Card>
+            }
+            { displayListGrid === "list" && 
+                <>
+                <tr key={patient._id}>
+                    <td onClick={() => onPatientClicked(patient)}>
                         {name}
+                    </td>
+                    <td onClick={() => onPatientClicked(patient)}>
+                        {cnp}
+                    </td>
+                    <td onClick={() => onPatientClicked(patient)}>
+                        {doctorsNames}
+                    </td>
+                    <td onClick={() => onPatientClicked(patient)}>
+                        {createdUpdated}
+                    </td>
+                    <td>
                         {(caller === 'assistant') && (
                             <MdDelete
                                 className="text-muted ms-auto"
@@ -97,8 +171,9 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, o
                                 }}
                             />
                         )}
-                        {(caller === 'doctor') && (
-                            <Button className={`${styleUtils.addTopButton}`}
+                        {caller === 'doctor' && (
+                            <>
+                            <Button className={stylesButton.buttonsAdmin}
                                 onClick={(e) => {
                                     onExpand ? onExpand(patient) : e.stopPropagation();
                                     e.stopPropagation();
@@ -106,42 +181,20 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, o
                             >
                                 View CT
                             </Button>
+                            <Button
+                                onClick={(e) => {
+                                    onExpandData ? onExpandData(patient) : e.stopPropagation();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                View Data
+                            </Button>
+                            </>
                         )}
-                    </Card.Title>
-                    <Card.Title className={styleUtils.flexCenter}>
-                        {cnp}
-                    </Card.Title>
-                    <Card.Title className={styleUtils.flexCenter}>
-                        {doctorsNames}
-                    </Card.Title>
-                    <Card.Title className={styles.cardText}>
-                        {description}
-                    </Card.Title>
-                </Card.Body>
-                <Card.Footer className="text-muted">
-                    {createdUpdated}
-                    {caller === 'technician' && (
-                        <Button className={`${styleUtils.addButton}`}
-                            onClick={(e) => {
-                                handleAddCT();
-                                e.stopPropagation();
-                            }}
-                        >
-                            Add CT
-                        </Button>
-                    )}
-                    {caller === 'doctor' && (
-                        <Button className={`${styleUtils.addButton}`}
-                            onClick={(e) => {
-                                onExpandData ? onExpandData(patient) : e.stopPropagation();
-                                e.stopPropagation();
-                            }}
-                        >
-                            View Data
-                        </Button>
-                    )}
-                </Card.Footer>
-            </Card>
+                    </td>
+                </tr>
+                </>
+            }
             <ToastContainer />
         </>
     )

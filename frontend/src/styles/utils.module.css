@@ -40,3 +40,17 @@
 .color {
     background-color: #ffb31a;
 }
+
+.viewModeButtonsContainerGrid {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    right: 130px;
+}
+
+.viewModeButtonsContainerList {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    right: 150px;
+}

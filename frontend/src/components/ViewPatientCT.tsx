@@ -1,6 +1,7 @@
 import React from 'react';
 import { MdArrowBack } from "react-icons/md";
 import { Patient as PatientModel } from "../models/patient";
+import stylePatient from "../styles/ViewPatient.module.css";
 
 interface ViewPatientProps {
     patient: PatientModel,
@@ -20,9 +21,19 @@ const ViewPatientCT: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         <MdArrowBack
             style={{height: '5vh', width: '5vw', overflow: 'auto'}}
             onClick={goBack}
-        />
-        <p>{name}</p>
-        <p>{cnp}</p>
+        /> <br/>
+        <form className={`${stylePatient.viewPatient} ${stylePatient.patientForm}`}>
+            <label className={`${stylePatient.formGroup} ${stylePatient.mylabel}`}>
+                Name:
+            </label>
+            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
+                type="text" value={name} readOnly />
+            <label className={`${stylePatient.formGroup} ${stylePatient.mylabel}`}>
+                CNP:
+            </label>
+            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
+                type="text" value={cnp} readOnly />
+        </form> <br/>
         <div style={{height: '80vh', width: '100vw', overflow: 'auto'}}>
         <iframe
             src="http://192.168.101.18:8080/data"

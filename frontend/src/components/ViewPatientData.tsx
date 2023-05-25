@@ -4,7 +4,9 @@ import { Patient as PatientModel } from "../models/patient";
 import { Button } from 'react-bootstrap';
 import { FaPlus } from "react-icons/fa";
 import styleUtils from "../styles/utils.module.css";
+import stylePatient from "../styles/ViewPatient.module.css";
 import FileUploadDialog from './FileUploadDialog';
+import ExampleComponent from './ExampleComponent';
 
 interface ViewPatientProps {
     patient: PatientModel,
@@ -46,7 +48,7 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         <MdArrowBack
             style={{height: '5vh', width: '5vw', overflow: 'auto'}}
             onClick={goBack}
-        />
+        /> <br/>
         <Button
             className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
             onClick={(e) => {
@@ -56,16 +58,20 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
             <FaPlus />
             Add new data pdf
         </Button>
-        <p>{name}</p>
-        <p>{cnp}</p>
-        <p>{cnp}</p>
+        <form className={`${stylePatient.viewPatient} ${stylePatient.patientForm}`}>
+            <label className={`${stylePatient.formGroup} ${stylePatient.label}`}>
+                Name:
+            </label>
+            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
+                type="text" value={name} readOnly />
+            <label className={`${stylePatient.formGroup} ${stylePatient.label}`}>
+                CNP:
+            </label>
+            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
+                type="text" value={cnp} readOnly />
+        </form> <br/>
         <div style={{height: '80vh', width: '100vw', overflow: 'auto'}}>
-        <iframe
-            src="http://192.168.101.18:8080/data"
-            title="Dash App"
-            width="100%"
-            height="100%"
-            style={{border: 'none'}}
+        <ExampleComponent
         />
         </div>
     </>

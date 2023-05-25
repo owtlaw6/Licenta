@@ -43,7 +43,7 @@ const TechnicianPageLoggedInView = () => {
                 searchText.length === 13 && patient.cnp.toLowerCase() === searchText.toLowerCase())
                 .map(patient => (
                     <Col key={patient._id}>
-                        <Patient key={patient._id} caller="technician"
+                        <Patient key={patient._id} caller="technician" displayListGrid="grid"
                             patient={patient}
                             className={styles.note}
                             onPatientClicked={setPatientToEdit}
@@ -58,7 +58,7 @@ const TechnicianPageLoggedInView = () => {
             <div className={styles.searchContainer}>
                 <input
                     type="text"
-                    placeholder="Search patients"
+                    placeholder="Search patients CNP"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                 />

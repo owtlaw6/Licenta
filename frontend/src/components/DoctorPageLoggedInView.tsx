@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Col, Row, Spinner } from "react-bootstrap";
 import styles from "../styles/NotesPage.module.css";
+import styleButtons from "../styles/utils.module.css";
 import Patient from './Patient';
 import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
 import { MdSearch } from "react-icons/md";
+import { FaList } from 'react-icons/fa';
+import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import ViewPatientCT from './ViewPatientCT';
 import ViewPatientData from './ViewPatientData';
 
@@ -21,6 +24,7 @@ const DoctorPageLoggedInView = () => {
     const [searchText, setSearchText] = useState("");
 
     const [page, setPage] = useState("listView");
+    const [viewMode, setViewMode] = useState("grid");
     const [patientToView, setPatientToView] = useState<PatientModel>();
 
     const goBackToListView = () => setPage("listView");
@@ -74,27 +78,21 @@ const DoctorPageLoggedInView = () => {
         }
     }
 
+    const toggleViewMode = () => {
+        setViewMode(viewMode === "grid" ? "list" : "grid");
+    };
+
     const patientsGrid =
         <>
-            <div className={styles.searchContainer}>
-            <input
-                type="text"
-                placeholder="Search patients"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-            />
-            <MdSearch className={styles.searchIcon} />
-            </div>
-            <br/>
-            
             <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
                 {patients.filter((patient) =>
                     `${patient.name} ${patient.cnp}`
                         .toLowerCase()
                         .includes(searchText.toLowerCase()))
+                    .reverse()
                     .map(patient => (
                         <Col key={patient._id}>
-                            <Patient key={patient._id} caller="doctor"
+                            <Patient key={patient._id} caller="doctor" displayListGrid="grid"
                                 patient={patient}
                                 className={styles.note}
                                 onPatientClicked={setPatientToEdit}
@@ -107,15 +105,62 @@ const DoctorPageLoggedInView = () => {
             </Row>
         </>
 
+const patientsList =
+        <>
+            <table className="table">
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">CNP</th>
+                        <th scope="col">Doctors</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {patients.filter((patient) =>
+                    `${patient.name} ${patient.cnp}`
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()))
+                    .map(patient => (
+                        <Patient key={patient._id} caller="doctor" displayListGrid="list"
+                            patient={patient}
+                            className={styles.note}
+                            onPatientClicked={setPatientToEdit}
+                            onDeletePatientClicked={deletePatient}
+                            onExpand={expandPatientCT}
+                            onExpandData={expandPatientData}
+                        />
+                    ))}
+                </tbody>
+            </table>
+        </>
+
     return (
         <>  
         {page === "listView" ? <>
+            <BsFillGrid3X3GapFill className={`${styleButtons.viewModeButtonsContainerGrid}`} 
+                onClick={toggleViewMode} />
+            <FaList className={`${styleButtons.viewModeButtonsContainerList}`} 
+                onClick={toggleViewMode} />
+            <div className={styles.searchContainer}>
+            <input
+                type="text"
+                placeholder="Search patients"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+            />
+            <MdSearch className={styles.searchIcon} />
+            </div> <br/>
+
             {patientsLoading && <Spinner animation='border' variant='primary' />}
             {showPatientsLoadingError && <p>Something went wrong. Please refresh the page.</p>}
             {!patientsLoading && !showPatientsLoadingError &&
                 <>
                     {patients.length > 0
-                        ? patientsGrid
+                        ? viewMode === "grid" 
+                            ? patientsGrid
+                            : patientsList
                         : <p>You don't have any patients yet</p>
                     }
                 </>

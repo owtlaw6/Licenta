@@ -5,9 +5,12 @@ import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
 import styleUtils from "../styles/utils.module.css";
+import styleButtons from "../styles/utils.module.css";
 import AddEditPatientDialog from "./AddEditPatientDialog";
 import Patient from './Patient';
 import { MdSearch } from "react-icons/md";
+import { FaList } from 'react-icons/fa';
+import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 
 const AssistantPageLoggedIn = () => {
     const [patients, setPatients] = useState<PatientModel[]>([]);
@@ -18,6 +21,12 @@ const AssistantPageLoggedIn = () => {
     const [patientToEdit, setPatientToEdit] = useState<PatientModel | null>(null);
 
     const [searchText, setSearchText] = useState("");
+
+    const [viewMode, setViewMode] = useState("grid");
+
+    const toggleViewMode = () => {
+        setViewMode(viewMode === "grid" ? "list" : "grid");
+    };
 
     useEffect(() => {
         async function loadPatient() {
@@ -46,7 +55,7 @@ const AssistantPageLoggedIn = () => {
                     .includes(searchText.toLowerCase()))
                 .map(patient => (
                 <Col key={patient._id}>
-                    <Patient key={patient._id} caller="assistant"
+                    <Patient key={patient._id} caller="assistant" displayListGrid="grid"
                         patient={patient}
                         className={styles.note}
                         onPatientClicked={setPatientToEdit}
@@ -55,9 +64,41 @@ const AssistantPageLoggedIn = () => {
                 </Col>
             ))}
         </Row>
+    
+    const patientsList =
+        <>
+            <table className="table">
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">CNP</th>
+                        <th scope="col">Doctors</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {patients.filter((patient) =>
+                    `${patient.name} ${patient.cnp}`
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()))
+                    .map(patient => (
+                        <Patient key={patient._id} caller="assistant" displayListGrid="list"
+                            patient={patient}
+                            className={styles.note}
+                            onPatientClicked={setPatientToEdit}
+                            onDeletePatientClicked={deletePatient}
+                        />
+                    ))}
+                </tbody>
+            </table>
+        </>
 
     return (
         <>
+            <BsFillGrid3X3GapFill className={`${styleButtons.viewModeButtonsContainerGrid}`} 
+                onClick={toggleViewMode} />
+            <FaList className={`${styleButtons.viewModeButtonsContainerList}`} 
+                onClick={toggleViewMode} />
             <div className={styles.searchContainer}>
             <input
                 type="text"
@@ -79,7 +120,9 @@ const AssistantPageLoggedIn = () => {
             {!patientsLoading && !showPatientsLoadingError &&
                 <>
                     {patients.length > 0
-                        ? patientsGrid
+                        ? viewMode === "grid" 
+                            ? patientsGrid
+                            : patientsList
                         : <p>You don't have any patients yet</p>
                     }
                 </>
