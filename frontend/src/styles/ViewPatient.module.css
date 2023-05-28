@@ -18,3 +18,9 @@
     margin-right: auto;
     padding: 8px;
 }
+
+.patientDataTable {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}

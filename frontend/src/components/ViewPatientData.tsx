@@ -11,17 +11,34 @@ import axios from "axios";
 import Table from 'react-bootstrap/Table';
 
 interface PatientData {
-    nodule_volume: number;
-    nodule_area: number;
-    fractal_dimension: number;
-    calcification: number;
-    spiculation: number;
-    type_of_nodule: string;
+    '(WBC) Leucocite': string;
+    'Neutrofile %': string;
+    'Monocite %': string;
+    'Eosinofile %': string;
+    'Basofile %': string;
+    'Limfocite %': string;
+    'Neutrofile #': string;
+    'Monocite #': string;
+    'Eosinofile #': string;
+    'Basofile #': string;
+    'Limfocite #': string;
+    '(RBC) Hematii': string;
+    'Hemoglobina': string;
+    '(HCT) Hematocrit': string;
+    '(MCV) Volum mediu eritrocitar': string;
+    '(MCH) Hemoglobina eritrocitara medie': string;
+    'medie de hemoglob. eritrocitara': string;
+    '(RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor': string;
+    'eritrocitelor': string;
+    '(PLT) Trombocite': string;
+    '(PDW) Indice de distributie a trombocitelor': string;
+    '(MPV) Volum mediu trombocitar': string;
+    'Placetocrit': string;
 }
 
 interface PatientNoduleData{
     cnp: string,
-    Data: PatientData[];
+    Hemoleucograma_completa: PatientData[];
 }
 
 interface ViewPatientProps {
@@ -69,7 +86,7 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
     const [sortConfig, setSortConfig] = useState<{key: keyof PatientData, direction: 'ascending' | 'descending'} | null>(null);
 
     const sortedData = React.useMemo(() => {
-        let sortableData = [...patientData?.Data ?? []];
+        let sortableData = [...patientData?.Hemoleucograma_completa ?? []];
         if (sortConfig !== null) {
             sortableData.sort((a, b) => {
                 if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -122,38 +139,108 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         </Button>
         
         <br/><br/>
-        <Table striped bordered hover size="sm" className="table">
+        <Table striped bordered hover size="sm" 
+                className={`${stylePatient.patientDataTable}`}>
             <thead className="thead-dark">
                 <tr>
-                    <th scope="col" onClick={() => requestSort('nodule_volume')}>
-                        nodule_volume
+                    <th scope="col" onClick={() => requestSort('(WBC) Leucocite')}>
+                        (WBC) Leucocite
                     </th>
-                    <th scope="col" onClick={() => requestSort('nodule_area')}>
-                        nodule_area
+                    <th scope="col" onClick={() => requestSort('Neutrofile %')}>
+                        Neutrofile %
                     </th>
-                    <th scope="col" onClick={() => requestSort('fractal_dimension')}>
-                        fractal_dimension
+                    <th scope="col" onClick={() => requestSort('Monocite %')}>
+                        Monocite %
                     </th>
-                    <th scope="col" onClick={() => requestSort('calcification')}>
-                        calcification
+                    <th scope="col" onClick={() => requestSort('Eosinofile %')}>
+                        Eosinofile %
                     </th>
-                    <th scope="col" onClick={() => requestSort('spiculation')}>
-                        spiculation
+                    <th scope="col" onClick={() => requestSort('Basofile %')}>
+                        Basofile %
                     </th>
-                    <th scope="col" onClick={() => requestSort('type_of_nodule')}>
-                        type_of_nodule
+                    <th scope="col" onClick={() => requestSort('Limfocite %')}>
+                        Limfocite %
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Neutrofile #')}>
+                        Neutrofile #
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Monocite #')}>
+                        Monocite #
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Eosinofile #')}>
+                        Eosinofi
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Basofile #')}>
+                        Basofi
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Limfocite #')}>
+                        Limfocite #
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(RBC) Hematii')}>
+                        (RBC) Hematii
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Hemoglobina')}>
+                        (HGB) Hemoglobina
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(HCT) Hematocrit')}>
+                        (HCT) Hematocrit
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(MCV) Volum mediu eritrocitar')}>
+                        (MCV) Volum mediu eritrocitar
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(MCH) Hemoglobina eritrocitara medie')}>
+                        (MCH) Hemoglobina eritrocitara medie
+                    </th>
+                    <th scope="col" onClick={() => requestSort('medie de hemoglob. eritrocitara')}>
+                        (MCHC) Concentr. medie de hemoglob. eritrocitara
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor')}>
+                        (RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor
+                    </th>
+                    <th scope="col" onClick={() => requestSort('eritrocitelor')}>
+                        (RDW-SD) Indice de ditributie a eritrocitelor
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(PLT) Trombocite')}>
+                        (PLT) Trombocite
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(PDW) Indice de distributie a trombocitelor')}>
+                        (PDW) Indice de distributie a trombocitelor
+                    </th>
+                    <th scope="col" onClick={() => requestSort('(MPV) Volum mediu trombocitar')}>
+                        (MPV) Volum mediu trombocitar
+                    </th>
+                    <th scope="col" onClick={() => requestSort('Placetocrit')}>
+                        *(PCT) Placetocrit
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {patientData && patientData.Data && sortedData.map((Data, index) => (
+                {patientData && patientData.Hemoleucograma_completa && 
+                sortedData.map((Hemoleucograma_completa, index) => (
                     <tr key={index}>
-                        <td>{Data.nodule_volume}</td>
-                        <td>{Data.nodule_area}</td>
-                        <td>{Data.fractal_dimension}</td>
-                        <td>{Data.calcification}</td>
-                        <td>{Data.spiculation}</td>
-                        <td>{Data.type_of_nodule}</td>
+                        <td>{Hemoleucograma_completa['(WBC) Leucocite']}</td>
+                        <td>{Hemoleucograma_completa['Neutrofile %']}</td>
+                        <td>{Hemoleucograma_completa['Monocite %']}</td>
+                        <td>{Hemoleucograma_completa['Eosinofile %']}</td>
+                        <td>{Hemoleucograma_completa['Basofile %']}</td>
+                        <td>{Hemoleucograma_completa['Limfocite %']}</td>
+                        <td>{Hemoleucograma_completa['Neutrofile #']}</td>
+                        <td>{Hemoleucograma_completa['Monocite #']}</td>
+                        <td>{Hemoleucograma_completa['Eosinofile #']}</td>
+                        <td>{Hemoleucograma_completa['Basofile #']}</td>
+                        <td>{Hemoleucograma_completa['Limfocite #']}</td>
+                        <td>{Hemoleucograma_completa['(RBC) Hematii']}</td>
+                        <td>{Hemoleucograma_completa['Hemoglobina']}</td>
+                        <td>{Hemoleucograma_completa['(HCT) Hematocrit']}</td>
+                        <td>{Hemoleucograma_completa['(MCV) Volum mediu eritrocitar']}</td>
+                        <td>{Hemoleucograma_completa['(MCH) Hemoglobina eritrocitara medie']}</td>
+                        <td>{Hemoleucograma_completa['medie de hemoglob. eritrocitara']}</td>
+                        <td>{Hemoleucograma_completa['(RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor']}</td>
+                        <td>{Hemoleucograma_completa['eritrocitelor']}</td>
+                        <td>{Hemoleucograma_completa['(PLT) Trombocite']}</td>
+                        <td>{Hemoleucograma_completa['(PDW) Indice de distributie a trombocitelor']}</td>
+                        <td>{Hemoleucograma_completa['(MPV) Volum mediu trombocitar']}</td>
+                        <td>{Hemoleucograma_completa['Placetocrit']}</td>
                     </tr>
                 ))}
             </tbody>
