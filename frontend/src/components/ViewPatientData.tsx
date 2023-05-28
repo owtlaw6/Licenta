@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdArrowBack } from "react-icons/md";
 import { Patient as PatientModel } from "../models/patient";
 import { Button } from 'react-bootstrap';
@@ -21,7 +21,7 @@ interface PatientData {
 
 interface PatientNoduleData{
     cnp: string,
-    data: PatientData[];
+    Data: PatientData[];
 }
 
 interface ViewPatientProps {
@@ -52,10 +52,19 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         goBack();
     };
 
-    const fetchNoduleDetails = async (): Promise<PatientNoduleData> => {
-        const response = await axios.get('/api/patients/' + cnp);
-        return response.data;
-    };
+    const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
+
+    useEffect(() => {
+        const fetchNoduleDetails = async () => {
+            try {
+                const response = await axios.get(`/api/patients/${patient._id}`);
+                setPatientData(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchNoduleDetails();
+    }, [patient._id]);
 
     return (
     <>
@@ -66,8 +75,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 patientCNP={cnp} 
             />
         }
-        
-        
         <MdArrowBack
             style={{height: '5vh', width: '5vw', overflow: 'auto'}}
             onClick={goBack}
@@ -103,17 +110,24 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 </tr>
             </thead>
             <tbody>
-                <tr key={patient._id}>
-                    <td>{name}</td>
-                    <td>{cnp}</td>
-                    {/* <td> {fetchNoduleDetails().Data.nodule_volume}</td> */}
-                </tr>
+                {patientData && patientData.Data && patientData.Data.map((Data, index) => (
+                    <tr key={index}>
+                        <td>{name}</td>
+                        <td>{cnp}</td>
+                        <td>{Data.nodule_volume}</td>
+                        <td>{Data.nodule_area}</td>
+                        <td>{Data.fractal_dimension}</td>
+                        <td>{Data.calcification}</td>
+                        <td>{Data.spiculation}</td>
+                        <td>{Data.type_of_nodule}</td>
+                    </tr>
+                ))}
             </tbody>
         </Table>
         
         <br/>
-        <ExampleComponent
-        />
+        {/*<ExampleComponent
+        />*/}
     </>
   );
 };

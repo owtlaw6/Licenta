@@ -200,26 +200,3 @@ export const deletePatient: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
-
-export const viewPatient: RequestHandler = async (req, res, next) => {
-    const patientId = req.params.patientId;
-    const authenticatedUserId = req.session.userId;
-
-    try {
-        assertIsDefined(authenticatedUserId);
-
-        if (!mongoose.isValidObjectId(patientId)) {
-            throw createHttpError(400, "Invalid patient id");
-        }
-
-        const patient = await PatientModel.findById(patientId).exec();
-
-        if (!patient) {
-            throw createHttpError(404, "Patient not found");
-        }
-
-        res.status(200).json(patient);
-    } catch (error) {
-        next(error);
-    }
-}

@@ -64,6 +64,7 @@ export async function deletePatient(patientId: string) {
     await fetchData("/api/patients/" + patientId, { method: "DELETE" });
 }
 
-export async function viewPatient(patientId: string) {
-    await fetchData("/api/patients/view-patient/" + patientId, { method: "GET" });
+export async function getPatient(patientId: string): Promise<Patient> {
+    const response = await fetchData("/api/patients/" + patientId, { method: "GET" });
+    return response.json();
 }

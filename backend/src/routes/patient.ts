@@ -13,6 +13,4 @@ router.patch("/:patientId", PatientController.updatePatient);
 
 router.delete("/:patientId", PatientController.deletePatient);
 
-router.get("/view-patient/:patientId", PatientController.viewPatient);
-
 export default router;
