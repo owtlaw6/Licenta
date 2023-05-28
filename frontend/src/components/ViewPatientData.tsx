@@ -6,9 +6,9 @@ import { FaPlus } from "react-icons/fa";
 import styleUtils from "../styles/utils.module.css";
 import stylePatient from "../styles/ViewPatient.module.css";
 import FileUploadDialog from './FileUploadDialog';
-import ExampleComponent from './ExampleComponent';
 import axios from "axios";
 import Table from 'react-bootstrap/Table';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface PatientData {
     '(WBC) Leucocite': string;
@@ -34,6 +34,7 @@ interface PatientData {
     '(PDW) Indice de distributie a trombocitelor': string;
     '(MPV) Volum mediu trombocitar': string;
     'Placetocrit': string;
+    'date': string;
 }
 
 interface PatientNoduleData{
@@ -143,6 +144,9 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 className={`${stylePatient.patientDataTable}`}>
             <thead className="thead-dark">
                 <tr>
+                    <th scope="col" onClick={() => requestSort('date')}>
+                        Data
+                    </th>
                     <th scope="col" onClick={() => requestSort('(WBC) Leucocite')}>
                         (WBC) Leucocite
                     </th>
@@ -218,6 +222,7 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 {patientData && patientData.Hemoleucograma_completa && 
                 sortedData.map((Hemoleucograma_completa, index) => (
                     <tr key={index}>
+                        <td>{Hemoleucograma_completa['date']}</td>
                         <td>{Hemoleucograma_completa['(WBC) Leucocite']}</td>
                         <td>{Hemoleucograma_completa['Neutrofile %']}</td>
                         <td>{Hemoleucograma_completa['Monocite %']}</td>

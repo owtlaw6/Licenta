@@ -24,6 +24,7 @@ const hemoleucogramaSchema = new Schema({
     '(PDW) Indice de distributie a trombocitelor': { type: String },
     '(MPV) Volum mediu trombocitar': { type: String },
     'Placetocrit': { type: String },
+    'date': { type: String },
 }, { _id: false }); // use _id: false to disable automatic id for this subdocument
 
 const patientSchema = new Schema({
