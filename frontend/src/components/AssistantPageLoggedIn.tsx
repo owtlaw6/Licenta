@@ -12,6 +12,7 @@ import { MdSearch } from "react-icons/md";
 import { FaList } from 'react-icons/fa';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import Table from 'react-bootstrap/Table';
+import React from 'react';
 
 const AssistantPageLoggedIn = () => {
     const [patients, setPatients] = useState<PatientModel[]>([]);
@@ -46,6 +47,32 @@ const AssistantPageLoggedIn = () => {
         loadPatient();
     }, []);
 
+    const [sortConfig, setSortConfig] = useState<{key: keyof PatientModel, direction: 'ascending' | 'descending'} | null>(null);
+
+    const sortedData = React.useMemo(() => {
+        let sortableData = [...patients ?? []];
+        if (sortConfig !== null) {
+            sortableData.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableData;
+    }, [patients, sortConfig]);
+
+    function requestSort(key: keyof PatientModel) {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig?.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    }
+
     async function deletePatient(patient: PatientModel) { }
 
     const patientsGrid =
@@ -71,14 +98,22 @@ const AssistantPageLoggedIn = () => {
             <Table striped bordered hover size="sm" className="table">
                 <thead className="thead-dark">
                     <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">CNP</th>
-                        <th scope="col">Doctors</th>
-                        <th scope="col">Date</th>
+                        <th scope="col" onClick={() => requestSort('name')}>
+                            Name
+                        </th>
+                        <th scope="col" onClick={() => requestSort('cnp')}>
+                            CNP
+                        </th>
+                        <th scope="col" onClick={() => requestSort('doctors')}>
+                            Doctors
+                        </th>
+                        <th scope="col" >
+                            Date
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                {patients.filter((patient) =>
+                {sortedData.filter((patient) =>
                     `${patient.name} ${patient.cnp}`
                         .toLowerCase()
                         .includes(searchText.toLowerCase()))

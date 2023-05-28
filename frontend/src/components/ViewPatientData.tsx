@@ -66,6 +66,32 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         fetchNoduleDetails();
     }, [patient._id]);
 
+    const [sortConfig, setSortConfig] = useState<{key: keyof PatientData, direction: 'ascending' | 'descending'} | null>(null);
+
+    const sortedData = React.useMemo(() => {
+        let sortableData = [...patientData?.Data ?? []];
+        if (sortConfig !== null) {
+            sortableData.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableData;
+    }, [patientData, sortConfig]);
+
+    function requestSort(key: keyof PatientData) {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig?.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    }
+
     return (
     <>
         {showFileUploadDialog &&
@@ -99,16 +125,28 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         <Table striped bordered hover size="sm" className="table">
             <thead className="thead-dark">
                 <tr>
-                    <th scope="col">nodule_volume</th>
-                    <th scope="col">nodule_area</th>
-                    <th scope="col">fractal_dimension</th>
-                    <th scope="col">calcification</th>
-                    <th scope="col">spiculation</th>
-                    <th scope="col">type_of_nodule</th>
+                    <th scope="col" onClick={() => requestSort('nodule_volume')}>
+                        nodule_volume
+                    </th>
+                    <th scope="col" onClick={() => requestSort('nodule_area')}>
+                        nodule_area
+                    </th>
+                    <th scope="col" onClick={() => requestSort('fractal_dimension')}>
+                        fractal_dimension
+                    </th>
+                    <th scope="col" onClick={() => requestSort('calcification')}>
+                        calcification
+                    </th>
+                    <th scope="col" onClick={() => requestSort('spiculation')}>
+                        spiculation
+                    </th>
+                    <th scope="col" onClick={() => requestSort('type_of_nodule')}>
+                        type_of_nodule
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                {patientData && patientData.Data && patientData.Data.map((Data, index) => (
+                {patientData && patientData.Data && sortedData.map((Data, index) => (
                     <tr key={index}>
                         <td>{Data.nodule_volume}</td>
                         <td>{Data.nodule_area}</td>

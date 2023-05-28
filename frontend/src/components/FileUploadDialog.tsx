@@ -49,9 +49,16 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded, patientCNP, caller }: Fi
     return (
         <>
             <Modal show onHide={onDismiss} className={styleUtils.fileUploadDialog}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add CT</Modal.Title>
-                </Modal.Header>
+                { caller === "CT" &&
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add CT</Modal.Title>
+                    </Modal.Header>
+                }
+                { caller === "PDF" &&
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add pdf</Modal.Title>
+                    </Modal.Header>
+                }
                 <Modal.Body>
                     <div {...getRootProps()}>
                         <input {...getInputProps()} />
