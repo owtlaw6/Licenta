@@ -21,7 +21,7 @@ interface PatientData {
 
 interface PatientNoduleData{
     cnp: string,
-    data: PatientData[];
+    Data: PatientData[];
 }
 
 interface ViewPatientProps {
@@ -56,8 +56,12 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
 
     useEffect(() => {
         const fetchNoduleDetails = async () => {
-            const response = await axios.get(`/api/patients/${patient._id}`);
-            setPatientData(response.data);
+            try {
+                const response = await axios.get(`/api/patients/${patient._id}`);
+                setPatientData(response.data);
+            } catch (error) {
+                console.error(error);
+            }
         };
         fetchNoduleDetails();
     }, [patient._id]);
@@ -106,16 +110,16 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 </tr>
             </thead>
             <tbody>
-                {patientData && patientData.data && patientData.data.map((data, index) => (
+                {patientData && patientData.Data && patientData.Data.map((Data, index) => (
                     <tr key={index}>
                         <td>{name}</td>
                         <td>{cnp}</td>
-                        <td>{data.nodule_volume}</td>
-                        <td>{data.nodule_area}</td>
-                        <td>{data.fractal_dimension}</td>
-                        <td>{data.calcification}</td>
-                        <td>{data.spiculation}</td>
-                        <td>{data.type_of_nodule}</td>
+                        <td>{Data.nodule_volume}</td>
+                        <td>{Data.nodule_area}</td>
+                        <td>{Data.fractal_dimension}</td>
+                        <td>{Data.calcification}</td>
+                        <td>{Data.spiculation}</td>
+                        <td>{Data.type_of_nodule}</td>
                     </tr>
                 ))}
             </tbody>
@@ -124,8 +128,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         <br/>
         {/*<ExampleComponent
         />*/}
-        <p>patientData {patientData ? 1 : 0}</p>
-        <p>patientData.data {patientData?.data ? 1 : 0}</p>
     </>
   );
 };
