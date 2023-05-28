@@ -15,4 +15,6 @@ router.delete("/:patientId", PatientController.deletePatient);
 
 router.get("/view-patient/:patientId", PatientController.viewPatient);
 
+router.get("/patientNoduleData/:patientCnp", PatientController.getPatientNoduleData);
+
 export default router;

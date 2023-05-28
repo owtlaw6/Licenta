@@ -223,3 +223,26 @@ export const viewPatient: RequestHandler = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getPatientNoduleData: RequestHandler = async (req, res, next) => {
+    const patientCnp = req.params.patientCnp;
+    const authenticatedUserId = req.session.userId;
+
+    try {
+        assertIsDefined(authenticatedUserId);
+
+        if (!mongoose.isValidObjectId(patientCnp)) {
+            throw createHttpError(400, "Invalid patient cnp");
+        }
+
+        const patient = await PatientModel.findOne({ cnp: patientCnp }).exec();
+
+        if (!patient) {
+            throw createHttpError(404, "Patient not found");
+        }
+
+        res.status(200).json(patient);
+    } catch (error) {
+        next(error);
+    }
+}

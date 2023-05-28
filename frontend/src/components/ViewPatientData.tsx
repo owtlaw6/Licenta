@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdArrowBack } from "react-icons/md";
 import { Patient as PatientModel } from "../models/patient";
 import { Button } from 'react-bootstrap';
@@ -52,8 +52,26 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         goBack();
     };
 
+    /*const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
+
+    useEffect(() => {
+        const fetchNoduleDetails = async () => {
+            const response = await axios.get(`/api/patientNoduleData/${cnp}`);
+            setPatientData(response.data);
+        };
+
+        fetchNoduleDetails();
+    }, [cnp]);*/
+
+    const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
+
+    useEffect(() => {
+        // Fetch the data when the component is mounted
+        fetchNoduleDetails().then(setPatientData);
+    }, []); // Empty dependency array means this effect runs once on mount
+
     const fetchNoduleDetails = async (): Promise<PatientNoduleData> => {
-        const response = await axios.get('/api/patients/' + cnp);
+        const response = await axios.get(`/api/patientNoduleData/${cnp}`);
         return response.data;
     };
 
@@ -103,17 +121,26 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 </tr>
             </thead>
             <tbody>
-                <tr key={patient._id}>
-                    <td>{name}</td>
-                    <td>{cnp}</td>
-                    {/* <td> {fetchNoduleDetails().Data.nodule_volume}</td> */}
-                </tr>
+                {patientData && patientData.data.map((data, index) => (
+                    <tr key={index}>
+                        <td>{name}</td>
+                        <td>{cnp}</td>
+                        <td>{data.nodule_volume}</td>
+                        <td>{data.nodule_area}</td>
+                        <td>{data.fractal_dimension}</td>
+                        <td>{data.calcification}</td>
+                        <td>{data.spiculation}</td>
+                        <td>{data.type_of_nodule}</td>
+                    </tr>
+                ))}
             </tbody>
         </Table>
         
         <br/>
         <ExampleComponent
         />
+        <p>patientData {patientData ? 1 : 0}</p>
+        <p>patientData.data {patientData?.data ? 1 : 0}</p>
     </>
   );
 };
