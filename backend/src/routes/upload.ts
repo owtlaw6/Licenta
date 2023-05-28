@@ -1,13 +1,16 @@
 import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
-import moment from 'moment';
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dir = `./uploads/${req.body.cnp}/${moment().format('YYYY-MM-DD')}`;
+    let dir = `./uploads/${req.body.cnp}/${Date.now()}`;
+
+    if (req.body.uploadType === 'PDF') {
+      dir = `./uploads/pdfs/${req.body.cnp}/${Date.now()}`;
+    }
 
     fs.exists(dir, exist => {
       if (!exist) {
@@ -17,7 +20,13 @@ const storage = multer.diskStorage({
     })  
   },
   filename: function(req, file, cb){
-    cb(null, file.originalname);
+    let fileName = file.originalname;
+
+    if (req.body.uploadType === 'PDF') {
+      fileName = `${Date.now()}`;
+    }
+
+    cb(null, fileName);
   }
 });
 

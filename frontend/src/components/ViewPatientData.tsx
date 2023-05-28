@@ -69,7 +69,7 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
     return (
     <>
         {showFileUploadDialog &&
-            <FileUploadDialog 
+            <FileUploadDialog caller = "PDF"
                 onDismiss={() => setShowFileUploadDialog(false)} 
                 onFilesUploaded={handleFilesUploaded}
                 patientCNP={cnp} 
@@ -99,8 +99,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         <Table striped bordered hover size="sm" className="table">
             <thead className="thead-dark">
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">CNP</th>
                     <th scope="col">nodule_volume</th>
                     <th scope="col">nodule_area</th>
                     <th scope="col">fractal_dimension</th>
@@ -112,8 +110,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
             <tbody>
                 {patientData && patientData.Data && patientData.Data.map((Data, index) => (
                     <tr key={index}>
-                        <td>{name}</td>
-                        <td>{cnp}</td>
                         <td>{Data.nodule_volume}</td>
                         <td>{Data.nodule_area}</td>
                         <td>{Data.fractal_dimension}</td>

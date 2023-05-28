@@ -78,7 +78,7 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, o
     return (
         <>
             {showFileUploadDialog &&
-                <FileUploadDialog 
+                <FileUploadDialog caller = "CT"
                     onDismiss={() => setShowFileUploadDialog(false)} 
                     onFilesUploaded={handleFilesUploaded}
                     patientCNP={patient.cnp} 

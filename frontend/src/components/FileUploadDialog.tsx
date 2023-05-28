@@ -10,9 +10,10 @@ interface FileUploadDialogProps {
     onDismiss: () => void,
     onFilesUploaded: (files: File[]) => void,
     patientCNP: string,
+    caller: string,
 }
 
-const FileUploadDialog = ({ onDismiss, onFilesUploaded, patientCNP }: FileUploadDialogProps) => {
+const FileUploadDialog = ({ onDismiss, onFilesUploaded, patientCNP, caller }: FileUploadDialogProps) => {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -24,6 +25,7 @@ const FileUploadDialog = ({ onDismiss, onFilesUploaded, patientCNP }: FileUpload
     const handleFileUpload = async () => {
         const formData = new FormData();
 
+        formData.append('uploadType', caller);
         formData.append('cnp', patientCNP);
 
         selectedFiles.forEach(file => {
