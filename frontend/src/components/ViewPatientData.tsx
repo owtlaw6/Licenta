@@ -52,28 +52,15 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         goBack();
     };
 
-    /*const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
-
-    useEffect(() => {
-        const fetchNoduleDetails = async () => {
-            const response = await axios.get(`/api/patientNoduleData/${cnp}`);
-            setPatientData(response.data);
-        };
-
-        fetchNoduleDetails();
-    }, [cnp]);*/
-
     const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
 
     useEffect(() => {
-        // Fetch the data when the component is mounted
-        fetchNoduleDetails().then(setPatientData);
-    }, []); // Empty dependency array means this effect runs once on mount
-
-    const fetchNoduleDetails = async (): Promise<PatientNoduleData> => {
-        const response = await axios.get(`/api/patientNoduleData/${cnp}`);
-        return response.data;
-    };
+        const fetchNoduleDetails = async () => {
+            const response = await axios.get(`/api/patients/${patient._id}`);
+            setPatientData(response.data);
+        };
+        fetchNoduleDetails();
+    }, [patient._id]);
 
     return (
     <>
@@ -84,8 +71,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 patientCNP={cnp} 
             />
         }
-        
-        
         <MdArrowBack
             style={{height: '5vh', width: '5vw', overflow: 'auto'}}
             onClick={goBack}
@@ -121,7 +106,7 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 </tr>
             </thead>
             <tbody>
-                {patientData && patientData.data.map((data, index) => (
+                {patientData && patientData.data && patientData.data.map((data, index) => (
                     <tr key={index}>
                         <td>{name}</td>
                         <td>{cnp}</td>
@@ -137,8 +122,8 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         </Table>
         
         <br/>
-        <ExampleComponent
-        />
+        {/*<ExampleComponent
+        />*/}
         <p>patientData {patientData ? 1 : 0}</p>
         <p>patientData.data {patientData?.data ? 1 : 0}</p>
     </>
