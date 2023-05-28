@@ -54,3 +54,10 @@
     position: absolute;
     right: 150px;
 }
+
+.blockTopCenter {
+    display: block;
+    margin-top: -45px;
+    margin-left: auto;
+    margin-right: auto;
+}

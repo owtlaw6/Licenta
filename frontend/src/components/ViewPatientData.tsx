@@ -7,6 +7,22 @@ import styleUtils from "../styles/utils.module.css";
 import stylePatient from "../styles/ViewPatient.module.css";
 import FileUploadDialog from './FileUploadDialog';
 import ExampleComponent from './ExampleComponent';
+import axios from "axios";
+import Table from 'react-bootstrap/Table';
+
+interface PatientData {
+    nodule_volume: number;
+    nodule_area: number;
+    fractal_dimension: number;
+    calcification: number;
+    spiculation: number;
+    type_of_nodule: string;
+}
+
+interface PatientNoduleData{
+    cnp: string,
+    data: PatientData[];
+}
 
 interface ViewPatientProps {
     patient: PatientModel,
@@ -36,6 +52,11 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         goBack();
     };
 
+    const fetchNoduleDetails = async (): Promise<PatientNoduleData> => {
+        const response = await axios.get('/api/patients/' + cnp);
+        return response.data;
+    };
+
     return (
     <>
         {showFileUploadDialog &&
@@ -45,12 +66,20 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
                 patientCNP={cnp} 
             />
         }
+        
+        
         <MdArrowBack
             style={{height: '5vh', width: '5vw', overflow: 'auto'}}
             onClick={goBack}
         /> <br/>
+        <label className={`${stylePatient.patientDetails}`}>
+            Name: {name}
+        </label>
+        <label className={`${stylePatient.patientDetails}`}>
+            CNP: {cnp}
+        </label>
         <Button
-            className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
+            className={`mb-4 ${styleUtils.blockTopCenter} ${styleUtils.flexCenter}`}
             onClick={(e) => {
                 handleAddDataPdf();
                 e.stopPropagation();
@@ -58,22 +87,33 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
             <FaPlus />
             Add new data pdf
         </Button>
-        <form className={`${stylePatient.viewPatient} ${stylePatient.patientForm}`}>
-            <label className={`${stylePatient.formGroup} ${stylePatient.label}`}>
-                Name:
-            </label>
-            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
-                type="text" value={name} readOnly />
-            <label className={`${stylePatient.formGroup} ${stylePatient.label}`}>
-                CNP:
-            </label>
-            <input className={`${stylePatient.formGroup} ${stylePatient.myinput}`} 
-                type="text" value={cnp} readOnly />
-        </form> <br/>
-        <div style={{height: '80vh', width: '100vw', overflow: 'auto'}}>
+        
+        <br/><br/>
+        <Table striped bordered hover size="sm" className="table">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">CNP</th>
+                    <th scope="col">nodule_volume</th>
+                    <th scope="col">nodule_area</th>
+                    <th scope="col">fractal_dimension</th>
+                    <th scope="col">calcification</th>
+                    <th scope="col">spiculation</th>
+                    <th scope="col">type_of_nodule</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr key={patient._id}>
+                    <td>{name}</td>
+                    <td>{cnp}</td>
+                    {/* <td> {fetchNoduleDetails().Data.nodule_volume}</td> */}
+                </tr>
+            </tbody>
+        </Table>
+        
+        <br/>
         <ExampleComponent
         />
-        </div>
     </>
   );
 };

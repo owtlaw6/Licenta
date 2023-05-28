@@ -9,28 +9,12 @@
     width: 250px;
 }
 
-.patientForm {
+.patientDetails {
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
-    margin-left: auto;
+    margin-left: 20px;
+    margin-top: -20px;
     margin-right: auto;
-}
-
-.formGroup {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 5px;
-}
-
-.mylabel {
-    font-weight: bold;
-}
-
-.myinput {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 8px;
 }

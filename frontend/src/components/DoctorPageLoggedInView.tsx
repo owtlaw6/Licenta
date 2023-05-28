@@ -11,6 +11,7 @@ import { FaList } from 'react-icons/fa';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import ViewPatientCT from './ViewPatientCT';
 import ViewPatientData from './ViewPatientData';
+import Table from 'react-bootstrap/Table';
 
 const DoctorPageLoggedInView = () => {
 
@@ -107,7 +108,7 @@ const DoctorPageLoggedInView = () => {
 
 const patientsList =
         <>
-            <table className="table">
+            <Table striped bordered hover size="sm" className="table">
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col">Name</th>
@@ -133,7 +134,7 @@ const patientsList =
                         />
                     ))}
                 </tbody>
-            </table>
+            </Table>
         </>
 
     return (

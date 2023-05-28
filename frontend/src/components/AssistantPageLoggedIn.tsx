@@ -11,6 +11,7 @@ import Patient from './Patient';
 import { MdSearch } from "react-icons/md";
 import { FaList } from 'react-icons/fa';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
+import Table from 'react-bootstrap/Table';
 
 const AssistantPageLoggedIn = () => {
     const [patients, setPatients] = useState<PatientModel[]>([]);
@@ -67,7 +68,7 @@ const AssistantPageLoggedIn = () => {
     
     const patientsList =
         <>
-            <table className="table">
+            <Table striped bordered hover size="sm" className="table">
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col">Name</th>
@@ -90,7 +91,7 @@ const AssistantPageLoggedIn = () => {
                         />
                     ))}
                 </tbody>
-            </table>
+            </Table>
         </>
 
     return (
