@@ -7,8 +7,7 @@ import styleUtils from "../styles/utils.module.css";
 import stylePatient from "../styles/ViewPatient.module.css";
 import FileUploadDialog from './FileUploadDialog';
 import axios from "axios";
-import Table from 'react-bootstrap/Table';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import Table from 'react-bootstrap/Table'; 
 
 interface PatientData {
     '(WBC) Leucocite': string;
