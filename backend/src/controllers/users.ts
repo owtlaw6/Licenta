@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { assertIsDefined } from "../util/assertIsDefined";
 import mongoose from "mongoose";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getDoctors: RequestHandler = async (req, res, next) => {
     try {
         const doctors = await UserModel.find({ role: "Doctor" });
@@ -86,15 +87,10 @@ interface LoginBody {
 export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
-    const role = req.body.role;
 
     try {
         if (!username || !password) {
             throw createHttpError(400, "Parameters missing");
-        }
-
-        if (!role) {
-            throw createHttpError(400, "Role missing");
         }
 
         const user = await UserModel.findOne({ username: username }).select("+password +email +role").exec();
@@ -107,10 +103,6 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async
 
         if (!passwordMatch) {
             throw createHttpError(401, "Invalid credentials");
-        }
-
-        if (role != user.role) {
-            throw createHttpError(401, "Wrong role");
         }
 
         req.session.userId = user._id;

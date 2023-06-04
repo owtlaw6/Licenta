@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MdArrowBack } from "react-icons/md";
 import { Patient as PatientModel } from "../models/patient";
 import { Button } from 'react-bootstrap';
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSort } from "react-icons/fa";
 import styleUtils from "../styles/utils.module.css";
 import stylePatient from "../styles/ViewPatient.module.css";
 import FileUploadDialog from './FileUploadDialog';
 import axios from "axios";
-import Table from 'react-bootstrap/Table'; 
+import Table from 'react-bootstrap/Table';
+import Plot from 'react-plotly.js';
+import Select, { components } from 'react-select';
 
 interface PatientData {
     '(WBC) Leucocite': string;
@@ -50,8 +52,6 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
     const {
         name,
         cnp,
-        doctors,
-        description,
     } = patient;
 
     const [showFileUploadDialog, setShowFileUploadDialog] = useState(false);
@@ -76,6 +76,9 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
             try {
                 const response = await axios.get(`/api/patients/${patient._id}`);
                 setPatientData(response.data);
+                if (response.data.Hemoleucograma_completa) {
+                    setAllColumns(Object.keys(response.data.Hemoleucograma_completa[0]));
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -109,7 +112,41 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         setSortConfig({ key, direction });
     }
 
-    return (
+    const [selectedColumnForPlot, setSelectedColumnForPlot] = useState<keyof PatientData | null>(null);
+
+    const handleSelectChangeForPlot = (selectedOption: { value: string; label: string } | null) => {
+        if (selectedOption) {
+            const value = selectedOption.value as keyof PatientData;
+            setSelectedColumnForPlot(value);
+        }
+    }
+
+    const [allColumns, setAllColumns] = useState<string[]>([]);
+    const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+
+    const options = useMemo(() => {
+        const options = allColumns.map(column => ({ value: column, label: column }));
+        options.unshift({ value: "selectAll", label: "Select All" });
+        return options;
+    }, [allColumns]);
+
+    const Option = (props: any) => {
+        return (
+            <div>
+            <components.Option {...props}>
+                <input type="checkbox" checked={props.isSelected} onChange={() => null} />{" "}
+                <label>{props.label}</label>
+            </components.Option>
+            </div>
+        );
+    };
+
+    const MultiValue = (props: any) => {
+        return null;
+    };
+    
+return (
     <>
         {showFileUploadDialog &&
             <FileUploadDialog caller = "PDF"
@@ -137,122 +174,103 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
             <FaPlus />
             Add new data pdf
         </Button>
-        
+        <br/>
+        <Select
+            onChange={handleSelectChangeForPlot}
+            options={Object.keys(patientData?.Hemoleucograma_completa[0] || {}).map(key => 
+                ({ value: key, label: key }))}
+            isSearchable
+            placeholder="Select the plot"
+            styles={{ 
+                control: (provided) => ({ 
+                    ...provided, 
+                    width: 200
+                }) 
+            }}
+        />
+        <br/>
+        {selectedColumnForPlot && patientData && (
+            <><Plot
+                data={[
+                    {
+                        x: patientData.Hemoleucograma_completa.map(item => item.date),
+                        y: patientData.Hemoleucograma_completa.map(item => 
+                            parseFloat(item[selectedColumnForPlot].split(' ')[0])),
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: {color: 'red'},
+                    },
+                ]}
+                layout={{width: 400, height: 350, title: `${selectedColumnForPlot}`}}
+            />
+            <br/></>
+        )}
+        <Select
+            isMulti
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            value={selectedOptions}
+            components={{
+                Option: Option,
+                MultiValue: MultiValue,
+            }}
+            name="columns"
+            className="basic-multi-select"
+            classNamePrefix="select"
+            options={options}
+            onChange={(selectedOptions) => {
+                if (!selectedOptions) {
+                    setSelectedOptions([]);
+                    setSelectedColumns([]);
+                    return;
+                }
+                const selectedValues = selectedOptions.map(option => option.value);
+                if (selectedValues.includes('selectAll') && (!selectedColumns.includes('selectAll') || selectedOptions.length > selectedColumns.length)) {
+                    setSelectedOptions(options);
+                    setSelectedColumns(allColumns);
+                }
+                else if (selectedColumns.includes('selectAll') && !selectedValues.includes('selectAll')) {
+                    setSelectedOptions([]);
+                    setSelectedColumns([]);
+                }
+                else {
+                    setSelectedOptions([...selectedOptions]);
+                    setSelectedColumns(selectedValues);
+                }
+            }}
+            placeholder="Select the columns"
+            styles={{ 
+                control: (provided) => ({ 
+                    ...provided, 
+                    width: 200
+                }) 
+            }}
+        />
         <br/><br/>
         <Table striped bordered hover size="sm" 
                 className={`${stylePatient.patientDataTable}`}>
             <thead className="thead-dark">
                 <tr>
-                    <th scope="col" onClick={() => requestSort('date')}>
-                        Data
+                {selectedColumns.map((column) => (
+                    <th scope="col" onClick={() => requestSort('date')} key={column}>
+                        <FaSort className={`text-muted ms-auto`} />
+                        {column}
                     </th>
-                    <th scope="col" onClick={() => requestSort('(WBC) Leucocite')}>
-                        (WBC) Leucocite
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Neutrofile %')}>
-                        Neutrofile %
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Monocite %')}>
-                        Monocite %
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Eosinofile %')}>
-                        Eosinofile %
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Basofile %')}>
-                        Basofile %
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Limfocite %')}>
-                        Limfocite %
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Neutrofile #')}>
-                        Neutrofile #
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Monocite #')}>
-                        Monocite #
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Eosinofile #')}>
-                        Eosinofi
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Basofile #')}>
-                        Basofi
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Limfocite #')}>
-                        Limfocite #
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(RBC) Hematii')}>
-                        (RBC) Hematii
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Hemoglobina')}>
-                        (HGB) Hemoglobina
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(HCT) Hematocrit')}>
-                        (HCT) Hematocrit
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(MCV) Volum mediu eritrocitar')}>
-                        (MCV) Volum mediu eritrocitar
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(MCH) Hemoglobina eritrocitara medie')}>
-                        (MCH) Hemoglobina eritrocitara medie
-                    </th>
-                    <th scope="col" onClick={() => requestSort('medie de hemoglob. eritrocitara')}>
-                        (MCHC) Concentr. medie de hemoglob. eritrocitara
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor')}>
-                        (RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor
-                    </th>
-                    <th scope="col" onClick={() => requestSort('eritrocitelor')}>
-                        (RDW-SD) Indice de ditributie a eritrocitelor
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(PLT) Trombocite')}>
-                        (PLT) Trombocite
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(PDW) Indice de distributie a trombocitelor')}>
-                        (PDW) Indice de distributie a trombocitelor
-                    </th>
-                    <th scope="col" onClick={() => requestSort('(MPV) Volum mediu trombocitar')}>
-                        (MPV) Volum mediu trombocitar
-                    </th>
-                    <th scope="col" onClick={() => requestSort('Placetocrit')}>
-                        *(PCT) Placetocrit
-                    </th>
+                ))}
                 </tr>
             </thead>
             <tbody>
                 {patientData && patientData.Hemoleucograma_completa && 
                 sortedData.map((Hemoleucograma_completa, index) => (
                     <tr key={index}>
-                        <td>{Hemoleucograma_completa['date']}</td>
-                        <td>{Hemoleucograma_completa['(WBC) Leucocite']}</td>
-                        <td>{Hemoleucograma_completa['Neutrofile %']}</td>
-                        <td>{Hemoleucograma_completa['Monocite %']}</td>
-                        <td>{Hemoleucograma_completa['Eosinofile %']}</td>
-                        <td>{Hemoleucograma_completa['Basofile %']}</td>
-                        <td>{Hemoleucograma_completa['Limfocite %']}</td>
-                        <td>{Hemoleucograma_completa['Neutrofile #']}</td>
-                        <td>{Hemoleucograma_completa['Monocite #']}</td>
-                        <td>{Hemoleucograma_completa['Eosinofile #']}</td>
-                        <td>{Hemoleucograma_completa['Basofile #']}</td>
-                        <td>{Hemoleucograma_completa['Limfocite #']}</td>
-                        <td>{Hemoleucograma_completa['(RBC) Hematii']}</td>
-                        <td>{Hemoleucograma_completa['Hemoglobina']}</td>
-                        <td>{Hemoleucograma_completa['(HCT) Hematocrit']}</td>
-                        <td>{Hemoleucograma_completa['(MCV) Volum mediu eritrocitar']}</td>
-                        <td>{Hemoleucograma_completa['(MCH) Hemoglobina eritrocitara medie']}</td>
-                        <td>{Hemoleucograma_completa['medie de hemoglob. eritrocitara']}</td>
-                        <td>{Hemoleucograma_completa['(RDW-CV) Coef de variatie al indicelui de ditributie al eritrocitelor']}</td>
-                        <td>{Hemoleucograma_completa['eritrocitelor']}</td>
-                        <td>{Hemoleucograma_completa['(PLT) Trombocite']}</td>
-                        <td>{Hemoleucograma_completa['(PDW) Indice de distributie a trombocitelor']}</td>
-                        <td>{Hemoleucograma_completa['(MPV) Volum mediu trombocitar']}</td>
-                        <td>{Hemoleucograma_completa['Placetocrit']}</td>
+                        {selectedColumns.map((column) => (
+                            <td key={column}>{(Hemoleucograma_completa as any)[column]}</td>
+                        ))}
                     </tr>
                 ))}
             </tbody>
         </Table>
-        
         <br/>
-        {/*<ExampleComponent
-        />*/}
     </>
   );
 };

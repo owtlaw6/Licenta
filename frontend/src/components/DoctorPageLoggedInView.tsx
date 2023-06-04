@@ -7,7 +7,7 @@ import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
 import { MdSearch } from "react-icons/md";
-import { FaList } from 'react-icons/fa';
+import { FaList, FaSort } from 'react-icons/fa';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import ViewPatientCT from './ViewPatientCT';
 import ViewPatientData from './ViewPatientData';
@@ -139,12 +139,15 @@ const patientsList =
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col" onClick={() => requestSort('name')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             Name
                         </th>
                         <th scope="col" onClick={() => requestSort('cnp')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             CNP
                         </th>
                         <th scope="col" onClick={() => requestSort('doctors')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             Doctors
                         </th>
                         <th scope="col">Date</th>

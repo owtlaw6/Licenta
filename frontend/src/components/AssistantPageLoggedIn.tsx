@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSort } from "react-icons/fa";
 import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
@@ -99,12 +99,15 @@ const AssistantPageLoggedIn = () => {
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col" onClick={() => requestSort('name')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             Name
                         </th>
                         <th scope="col" onClick={() => requestSort('cnp')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             CNP
                         </th>
                         <th scope="col" onClick={() => requestSort('doctors')}>
+                            <FaSort className={`text-muted ms-auto`} />
                             Doctors
                         </th>
                         <th scope="col" >
