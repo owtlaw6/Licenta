@@ -10,9 +10,10 @@ interface UserProps {
     onDeleteUserClicked: (user: UserModel) => void,
     className?: string,
     caller: string,
+    displayListGrid: string,
 }
 
-const User = ({user, onUserClicked, onDeleteUserClicked, className, caller }: UserProps) => {
+const User = ({user, onUserClicked, onDeleteUserClicked, className, caller, displayListGrid }: UserProps) => {
     const {
         username,
         email,
@@ -21,12 +22,46 @@ const User = ({user, onUserClicked, onDeleteUserClicked, className, caller }: Us
 
     return (
         <>
-            <Card
-                className={`${styles.noteCard} ${className}`}
-                onClick={() => onUserClicked(user)}>
-                <Card.Body className={styles.cardBody}>
-                    <Card.Title className={styleUtils.flexCenter}>
+            { displayListGrid === "grid" &&
+                <Card
+                    className={`${styles.noteCard} ${className}`}
+                    onClick={() => onUserClicked(user)}>
+                    <Card.Body className={styles.cardBody}>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {username}
+                            {(caller === 'admin') && (
+                                <MdDelete
+                                    className="text-muted ms-auto"
+                                    onClick={(e) => {
+                                        onDeleteUserClicked(user);
+                                        e.stopPropagation();
+                                    }}
+                                />
+                            )}
+                            
+                        </Card.Title>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {email ? email : "cevaaaa"}
+                        </Card.Title>
+                        <Card.Title className={styleUtils.flexCenter}>
+                            {role}
+                        </Card.Title>
+                    </Card.Body>
+                </Card>
+            }
+            { displayListGrid === "list" && 
+                <>
+                <tr key={user._id}>
+                    <td onClick={() => onUserClicked(user)}>
                         {username}
+                    </td>
+                    <td onClick={() => onUserClicked(user)}>
+                        {email}
+                    </td>
+                    <td onClick={() => onUserClicked(user)}>
+                        {role}
+                    </td>
+                    <td>
                         {(caller === 'admin') && (
                             <MdDelete
                                 className="text-muted ms-auto"
@@ -36,16 +71,10 @@ const User = ({user, onUserClicked, onDeleteUserClicked, className, caller }: Us
                                 }}
                             />
                         )}
-                        
-                    </Card.Title>
-                    <Card.Title className={styleUtils.flexCenter}>
-                        {email ? email : "cevaaaa"}
-                    </Card.Title>
-                    <Card.Title className={styleUtils.flexCenter}>
-                        {role}
-                    </Card.Title>
-                </Card.Body>
-            </Card>
+                    </td>
+                </tr>
+                </>
+            }
         </>
     )
 }

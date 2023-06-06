@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Row, Spinner, Table } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import { User as UserModel } from '../models/user';
 import * as UsersApi from "../network/users_api";
@@ -8,6 +8,9 @@ import styleUtils from "../styles/utils.module.css";
 import AddEditUserDialog from "./AddEditUserDialog";
 import User from './User';
 import { MdSearch } from "react-icons/md";
+import { FaList, FaSort } from 'react-icons/fa';
+import { BsFillGrid3X3GapFill } from 'react-icons/bs';
+import React from 'react';
 
 const UsersList = () => {
     const [users, setUsers] = useState<UserModel[]>([]);
@@ -18,6 +21,12 @@ const UsersList = () => {
     const [userToEdit, setUserToEdit] = useState<UserModel | null>(null);
 
     const [searchText, setSearchText] = useState("");
+
+    const [viewMode, setViewMode] = useState("grid");
+
+    const toggleViewMode = () => {
+        setViewMode(viewMode === "grid" ? "list" : "grid");
+    };
 
     useEffect(() => {
         async function loadUser() {
@@ -46,6 +55,32 @@ const UsersList = () => {
         }
     }
 
+    const [sortConfig, setSortConfig] = useState<{key: keyof UserModel, direction: 'ascending' | 'descending'} | null>(null);
+
+    const sortedData = React.useMemo(() => {
+        let sortableData = [...users ?? []];
+        if (sortConfig !== null) {
+            sortableData.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableData;
+    }, [users, sortConfig]);
+
+    function requestSort(key: keyof UserModel) {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig?.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    }
+
     const usersGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
             {Array.isArray(users) && users.filter((user) =>
@@ -54,7 +89,7 @@ const UsersList = () => {
                     .includes(searchText.toLowerCase()))
                 .map(user => (
                 <Col key={user._id}>
-                    <User caller="admin"
+                    <User caller="admin" displayListGrid="grid"
                         user={user}
                         className={styles.note}
                         onUserClicked={setUserToEdit}
@@ -64,8 +99,48 @@ const UsersList = () => {
             ))}
         </Row>
 
+    const usersList =
+        <>
+        <Table striped bordered hover size="sm" className="table">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="col" onClick={() => requestSort('username')}>
+                        <FaSort className={`text-muted ms-auto`} />
+                        Username
+                    </th>
+                    <th scope="col" onClick={() => requestSort('email')}>
+                        <FaSort className={`text-muted ms-auto`} />
+                        Email
+                    </th>
+                    <th scope="col" onClick={() => requestSort('role')}>
+                        <FaSort className={`text-muted ms-auto`} />
+                        Role
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {sortedData.filter((user) =>
+                `${user.username} ${user.email} ${user.role}`
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()))
+                .map(user => (
+                    <User caller="admin" displayListGrid="list"
+                        user={user}
+                        className={styles.note}
+                        onUserClicked={setUserToEdit}
+                        onDeleteUserClicked={deleteUser}
+                    />
+                ))}
+            </tbody>
+        </Table>
+    </>
+
     return (
         <>
+            <BsFillGrid3X3GapFill className={`${styleUtils.viewModeButtonsContainerGrid}`} 
+                onClick={toggleViewMode} />
+            <FaList className={`${styleUtils.viewModeButtonsContainerList}`} 
+                onClick={toggleViewMode} />
             <div className={styles.searchContainer}>
             <input
                 type="text"
@@ -87,7 +162,9 @@ const UsersList = () => {
             {!usersLoading && !showUsersLoadingError &&
                 <>
                     {users.length > 0
-                        ? usersGrid
+                        ? viewMode === "grid" 
+                            ? usersGrid
+                            : usersList
                         : <p>You don't have any users yet</p>
                     }
                 </>

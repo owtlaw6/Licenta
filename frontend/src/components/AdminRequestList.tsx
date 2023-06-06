@@ -8,6 +8,7 @@ import styles from "../styles/adminButtons.module.css";
 import styleButtons from "../styles/signUpButtons.module.css";
 import AssistantPageLoggedIn from "../components/AssistantPageLoggedIn";
 import UsersList from './UsersList';
+import DoctorPageLoggedInView from './DoctorPageLoggedInView';
 
 export const fetchRequests = async (): Promise<Request[]> => {
     const response = await axios.get('/api/requests');
@@ -31,6 +32,8 @@ const AdminRequestList: React.FC = () => {
     const showRequestsList = () => setActiveInterface('requests');
     const showPatientsList = () => setActiveInterface('patients');
     const showUsersList = () => setActiveInterface('users');
+    const showDoctorView = () => setActiveInterface('doctors');
+    
 
     useEffect(() => {
         loadRequests();
@@ -121,6 +124,9 @@ const AdminRequestList: React.FC = () => {
                 <Button type="submit" className={styleButtons.buttonMargin} onClick={showUsersList}>
                     Users List
                 </Button>
+                <Button type="submit" className={styleButtons.buttonMargin} onClick={showDoctorView}>
+                    Doctor View
+                </Button>
             </Row>
             {activeInterface === 'requests' && (
                 requestsList
@@ -130,6 +136,9 @@ const AdminRequestList: React.FC = () => {
             )}
             {activeInterface === 'users' && (
                 <UsersList />
+            )}
+            {activeInterface === 'doctors' && (
+                <DoctorPageLoggedInView />
             )}
         </>
     );
