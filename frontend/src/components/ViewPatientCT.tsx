@@ -30,7 +30,7 @@ const ViewPatientCT: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         </label> <br/>
         <div style={{height: '80vh', width: '100vw', overflow: 'auto'}}>
         <iframe
-            src="http://192.168.101.18:8080/data"
+            src="http://192.168.101.31:3000/visualize?cnp=3456789989951"
             title="Dash App"
             width="100%"
             height="100%"

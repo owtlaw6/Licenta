@@ -62,6 +62,7 @@
     "@types/axios": "^0.14.0",
     "@types/plotly.js": "^2.12.18",
     "@types/react-plotly.js": "^2.6.0",
-    "@types/react-select": "^5.0.1"
+    "@types/react-select": "^5.0.1",
+    "cypress": "^12.15.0"
   }
 }

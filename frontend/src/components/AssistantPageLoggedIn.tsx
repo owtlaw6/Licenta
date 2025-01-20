@@ -73,7 +73,15 @@ const AssistantPageLoggedIn = () => {
         setSortConfig({ key, direction });
     }
 
-    async function deletePatient(patient: PatientModel) { }
+    async function deletePatient(patient: PatientModel) {
+        try {
+            await PatientsApi.deletePatient(patient._id);
+            setPatients(patients.filter(existingPatient => existingPatient._id !== patient._id));
+        } catch (error) {
+            console.error(error);
+            alert(error);
+        }
+    }
 
     const patientsGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
