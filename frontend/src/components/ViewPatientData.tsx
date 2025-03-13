@@ -11,7 +11,7 @@ import Table from 'react-bootstrap/Table';
 import Plot from 'react-plotly.js';
 import Select, { components } from 'react-select';
 
-interface PatientData {
+export interface PatientData {
     '(WBC) Leucocite': string;
     'Neutrofile %': string;
     'Monocite %': string;
@@ -38,7 +38,7 @@ interface PatientData {
     'date': string;
 }
 
-interface PatientNoduleData{
+export interface PatientNoduleData{
     cnp: string,
     Hemoleucograma_completa: PatientData[];
 }

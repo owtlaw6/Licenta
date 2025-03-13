@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Col, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Row, Spinner } from "react-bootstrap";
 import styles from "../styles/NotesPage.module.css";
 import styleButtons from "../styles/utils.module.css";
 import Patient from './Patient';
@@ -13,6 +13,7 @@ import ViewPatientCT from './ViewPatientCT';
 import ViewPatientData from './ViewPatientData';
 import Table from 'react-bootstrap/Table';
 import React from 'react';
+import ComparePatientsView from './ComparePatientsView';
 
 const DoctorPageLoggedInView = () => {
 
@@ -32,20 +33,21 @@ const DoctorPageLoggedInView = () => {
     const goBackToListView = () => setPage("listView");
 
     useEffect(() => {
-        async function loadPatient() {
+        async function loadPatients() {
             try {
                 setShowPatientsLoadingError(false);
                 setPatientsLoading(true);
-                const patients = await PatientsApi.fetchPatients();
-                setPatients(patients);
+                const patientsData = await PatientsApi.fetchPatients();
+                setPatients(patientsData);
+                console.log("Fetched patients:", patientsData);
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching patients:", error);
                 setShowPatientsLoadingError(true);
             } finally {
                 setPatientsLoading(false);
             }
         }
-        loadPatient();
+        loadPatients();
     }, []);
 
     async function deletePatient(patient: PatientModel) {
@@ -110,8 +112,7 @@ const DoctorPageLoggedInView = () => {
         setSortConfig({ key, direction });
     }
 
-    const patientsGrid =
-        <>
+    const patientsGrid = <>
             <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>
                 {patients.filter((patient) =>
                     `${patient.name} ${patient.cnp}`
@@ -133,8 +134,7 @@ const DoctorPageLoggedInView = () => {
             </Row>
         </>
 
-const patientsList =
-        <>
+const patientsList = <>
             <Table striped bordered hover size="sm" className="table">
                 <thead className="thead-dark">
                     <tr>
@@ -175,66 +175,80 @@ const patientsList =
 
     return (
         <>  
-        {page === "listView" ? <>
-            <BsFillGrid3X3GapFill className={`${styleButtons.viewModeButtonsContainerGrid}`} 
-                onClick={toggleViewMode} />
-            <FaList className={`${styleButtons.viewModeButtonsContainerList}`} 
-                onClick={toggleViewMode} />
-            <div className={styles.searchContainer}>
-            <input
-                type="text"
-                placeholder="Search patients"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-            />
-            <MdSearch className={styles.searchIcon} />
-            </div> <br/>
+        {page === "compareView" ? (
+        <ComparePatientsView 
+            goBack={() => setPage("listView")}
+            patients={patients} 
+        />
+        ) : ( <>
+            {page === "listView" ? <>
+                <BsFillGrid3X3GapFill className={`${styleButtons.viewModeButtonsContainerGrid}`} 
+                    onClick={toggleViewMode} />
+                <FaList className={`${styleButtons.viewModeButtonsContainerList}`} 
+                    onClick={toggleViewMode} />
+                <div className={styles.searchContainer}>
+                <input
+                    type="text"
+                    placeholder="Search patients"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                />
+                <MdSearch className={styles.searchIcon} />
+                </div> 
 
-            {patientsLoading && <Spinner animation='border' variant='primary' />}
-            {showPatientsLoadingError && <p>Something went wrong. Please refresh the page.</p>}
-            {!patientsLoading && !showPatientsLoadingError &&
-                <>
-                    {patients.length > 0
-                        ? viewMode === "grid" 
-                            ? patientsGrid
-                            : patientsList
-                        : <p>You don't have any patients yet</p>
-                    }
-                </>
-            }
-            {showPatientDialog &&
-                <AddEditPatientDialog caller="doctor"
-                    onDismiss={() => setShowPatientDialog(false)}
-                    onPatientSaved={(newPatient) => {
-                        setPatients([...patients, newPatient]);
-                        setShowPatientDialog(false);
-                    }}
+                <Button 
+                    onClick={() => setPage("compareView")}
+                    className="ml-4">
+                    Compare Patients
+                </Button>
+                <br/>
+
+                {patientsLoading && <Spinner animation='border' variant='primary' />}
+                {showPatientsLoadingError && <p>Something went wrong. Please refresh the page.</p>}
+                {!patientsLoading && !showPatientsLoadingError &&
+                    <>
+                        {patients.length > 0
+                            ? viewMode === "grid" 
+                                ? patientsGrid
+                                : patientsList
+                            : <p>You don't have any patients yet</p>
+                        }
+                    </>
+                }
+                {showPatientDialog &&
+                    <AddEditPatientDialog caller="doctor"
+                        onDismiss={() => setShowPatientDialog(false)}
+                        onPatientSaved={(newPatient) => {
+                            setPatients([...patients, newPatient]);
+                            setShowPatientDialog(false);
+                        }}
+                    />
+                }
+                {patientToEdit &&
+                    <AddEditPatientDialog caller="doctor"
+                        patientToEdit={patientToEdit}
+                        onDismiss={() => setPatientToEdit(null)}
+                        onPatientSaved={(updatedPatient) => {
+                            setPatients(patients.map(existingPatient => existingPatient._id ===
+                                updatedPatient._id ? updatedPatient : existingPatient));
+                            setPatientToEdit(null);
+                        }}
+                    />
+                }
+            </>: patientToView && page === "expandedViewCT" ? (
+                <ViewPatientCT key={patientToView._id} 
+                    patient={patientToView}
+                    goBack={goBackToListView} 
                 />
-            }
-            {patientToEdit &&
-                <AddEditPatientDialog caller="doctor"
-                    patientToEdit={patientToEdit}
-                    onDismiss={() => setPatientToEdit(null)}
-                    onPatientSaved={(updatedPatient) => {
-                        setPatients(patients.map(existingPatient => existingPatient._id ===
-                            updatedPatient._id ? updatedPatient : existingPatient));
-                        setPatientToEdit(null);
-                    }}
+            ) : patientToView && page === "expandedViewData" ? (
+                <ViewPatientData key={patientToView._id} 
+                    patient={patientToView}
+                    goBack={goBackToListView} 
                 />
-            }
-        </>: patientToView && page === "expandedViewCT" ? (
-            <ViewPatientCT key={patientToView._id} 
-                patient={patientToView}
-                goBack={goBackToListView} 
-            />
-        ) : patientToView && page === "expandedViewData" ? (
-            <ViewPatientData key={patientToView._id} 
-                patient={patientToView}
-                goBack={goBackToListView} 
-            />
-        ) : null }
+            ) : null } 
         </>
-    );
-}
+    )}
+    </>
+)}
 
 export default DoctorPageLoggedInView;
