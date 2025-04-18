@@ -11,26 +11,26 @@ export const getPatients: RequestHandler = async (req, res, next) => {
     try {
         assertIsDefined(authenticatedUserId);
 
-        const authenticatedUser = await UserModel.findById(authenticatedUserId).exec();
+        const authenticatedUser = await UserModel.findById(authenticatedUserId).lean().exec();
         if (!authenticatedUser) {
             throw createHttpError(404, "User not found");
         }
         
         if (authenticatedUser.role === "Assistant") {
-            const patient = await PatientModel.find().exec();
+            const patient = await PatientModel.find().lean().exec();
             res.status(200).json(patient);
         } else if (authenticatedUser.role === "Doctor") {
             const patient = await PatientModel.find({
                 doctors: {
                     $in: [authenticatedUserId],
                 },
-            }).exec();
+            }).lean().exec();
             res.status(200).json(patient);
         } else if (authenticatedUser.role === "Technician") {
-            const patient = await PatientModel.find().exec();
+            const patient = await PatientModel.find().lean().exec();
             res.status(200).json(patient);
         } else if (authenticatedUser.role === "Admin") {
-            const patient = await PatientModel.find().exec();
+            const patient = await PatientModel.find().lean().exec();
             res.status(200).json(patient);
         } else {
             throw createHttpError(403, "You don't have permission to perform this action");
@@ -51,7 +51,7 @@ export const getPatient: RequestHandler = async (req, res, next) => {
             throw createHttpError(400, "Invalid patient id");
         }
 
-        const patient = await PatientModel.findById(patientId).exec();
+        const patient = await PatientModel.findById(patientId).lean().exec();
 
         if (!patient) {
             throw createHttpError(404, "Patient not found");
@@ -77,9 +77,8 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
     try {
         assertIsDefined(authenticatedUserId);
 
-        const existingPatient = await PatientModel.findOne({ cnp: cnp }).exec();
-
-        if (existingPatient) {
+        const existingCnp = await PatientModel.exists({ cnp });
+        if (existingCnp) {
             throw createHttpError(409, "CNP already exists for a patient.");
         }
 
@@ -102,7 +101,7 @@ export const createPatient: RequestHandler<unknown, unknown, CreatePatientBody, 
         const newPatient = await PatientModel.create({
             name: name,
             cnp: cnp,
-            doctors: doctors,
+            doctors: doctors || [],
             description: description,
         });
 
@@ -149,6 +148,11 @@ async (req, res, next) => {
 
         if (newCnp.length !== 13 || !(/^[0-9]+$/.test(newCnp))) {
             throw createHttpError(400, "Wrong CNP");
+        }
+
+        const existingCnpPatient = await PatientModel.findOne({ cnp: newCnp, _id: { $ne: patientId } }).exec();
+        if (existingCnpPatient) {
+            throw createHttpError(409, "Another patient already has this CNP.");
         }
 
         if (!newDoctors) {

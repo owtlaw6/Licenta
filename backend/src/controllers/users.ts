@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getDoctors: RequestHandler = async (req, res, next) => {
     try {
-        const doctors = await UserModel.find({ role: "Doctor" });
+        const doctors = await UserModel.find({ role: "Doctor" }).lean();
         res.json(doctors);
     } catch (error) {
         console.error("Error getting doctors:", error);
@@ -19,7 +19,7 @@ export const getDoctors: RequestHandler = async (req, res, next) => {
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
     try {
-        const user = await UserModel.findById(req.session.userId).select("+email").exec();
+        const user = await UserModel.findById(req.session.userId).select("+email").lean().exec();
         res.status(200).json(user);
     } catch (error) {
         next(error);
@@ -49,14 +49,12 @@ async (req, res, next) => {
             throw createHttpError(400, "Role missing ");
         }
 
-        const existingUsername = await UserModel.findOne({ username: username }).exec();
-
+        const existingUsername = await UserModel.exists({ username });
         if (existingUsername) {
             throw createHttpError(409, "Username already taken. Please choose a different one or log in instead.");
         }
 
-        const existingEmail = await UserModel.findOne({ email: email }).exec();
-
+        const existingEmail = await UserModel.exists({ email });
         if (existingEmail) {
             throw createHttpError(409, "A user with this email address already exists. Please log in instead.");
         }
@@ -93,7 +91,7 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async
             throw createHttpError(400, "Parameters missing");
         }
 
-        const user = await UserModel.findOne({ username: username }).select("+password +email +role").exec();
+        const user = await UserModel.findOne({ username: username }).select("+password").exec();
 
         if (!user) {
             throw createHttpError(401, "Invalid credentials");
@@ -106,7 +104,7 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async
         }
 
         req.session.userId = user._id;
-        res.status(201).json(user);
+        res.status(200).json(user);
     } catch (error) {
         next(error);
     }
@@ -124,7 +122,7 @@ export const logout: RequestHandler = (req, res, next) => {
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
     try {
-        const users = await UserModel.find().exec();
+        const users = await UserModel.find().lean().exec();
         res.status(200).json(users);
     } catch (error) {
         next(error);
@@ -142,7 +140,7 @@ export const getUser: RequestHandler = async (req, res, next) => {
             throw createHttpError(400, "Invalid user id");
         }
 
-        const user = await UserModel.findById(userId).exec();
+        const user = await UserModel.findById(userId).lean().exec();
 
         if (!user) {
             throw createHttpError(404, "User not found");
@@ -169,18 +167,6 @@ export const createUser: RequestHandler<unknown, unknown, CreateUserBody, unknow
     try {
         assertIsDefined(authenticatedUserId);
 
-        const existingUsername = await UserModel.findOne({ username: username }).exec();
-
-        if (existingUsername) {
-            throw createHttpError(409, "This username already exists for a user.");
-        }
-
-        const existingEmail = await UserModel.findOne({ email: email }).exec();
-
-        if (existingEmail) {
-            throw createHttpError(409, "This email is already assigned to a user.");
-        }
-
         if (!username) {
             throw createHttpError(400, "User must have a username");
         }
@@ -195,6 +181,16 @@ export const createUser: RequestHandler<unknown, unknown, CreateUserBody, unknow
 
         if (!role) {
             throw createHttpError(400, "User must have a role");
+        }
+
+        const existingUsername = await UserModel.exists({ username });
+        if (existingUsername) {
+            throw createHttpError(409, "This username already exists for a user.");
+        }
+
+        const existingEmail = await UserModel.exists({ email });
+        if (existingEmail) {
+            throw createHttpError(409, "This email is already assigned to a user.");
         }
 
         const passwordHashed = await bcrypt.hash(passwordRaw, 10);

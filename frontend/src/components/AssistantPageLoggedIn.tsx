@@ -3,6 +3,7 @@ import { Button, Col, Row, Spinner } from "react-bootstrap";
 import { FaPlus, FaSort } from "react-icons/fa";
 import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
+import { fetchDoctors, Doctor } from "../network/general_api";
 import styles from "../styles/NotesPage.module.css";
 import styleUtils from "../styles/utils.module.css";
 import styleButtons from "../styles/utils.module.css";
@@ -49,6 +50,32 @@ const AssistantPageLoggedIn = () => {
 
     const [sortConfig, setSortConfig] = useState<{key: keyof PatientModel, direction: 'ascending' | 'descending'} | null>(null);
 
+    const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+    
+    useEffect(() => {
+        async function loadData() {
+            try {
+                setShowPatientsLoadingError(false);
+                setPatientsLoading(true);
+    
+                const [fetchedPatients, fetchedDoctors] = await Promise.all([
+                    PatientsApi.fetchPatients(),
+                    fetchDoctors()
+                ]);
+    
+                setPatients(fetchedPatients);
+                setDoctorsAll(fetchedDoctors);
+            } catch (error) {
+                console.error(error);
+                setShowPatientsLoadingError(true);
+            } finally {
+                setPatientsLoading(false);
+            }
+        }
+        loadData();
+    }, []);
+    
+
     const sortedData = React.useMemo(() => {
         let sortableData = [...patients ?? []];
         if (sortConfig !== null) {
@@ -88,6 +115,7 @@ const AssistantPageLoggedIn = () => {
                         className={styles.note}
                         onPatientClicked={setPatientToEdit}
                         onDeletePatientClicked={deletePatient}
+                        doctorsAll={doctorsAll}
                     />
                 </Col>
             ))}
@@ -126,6 +154,7 @@ const AssistantPageLoggedIn = () => {
                             className={styles.note}
                             onPatientClicked={setPatientToEdit}
                             onDeletePatientClicked={deletePatient}
+                            doctorsAll={doctorsAll}
                         />
                     ))}
                 </tbody>

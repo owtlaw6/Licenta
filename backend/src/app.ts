@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
-import notesRoutes from "./routes/notes";
 import userRoutes from "./routes/users";
 import patientsRoutes from "./routes/patient";
 import requestsRoutes from "./routes/requests";
@@ -33,7 +32,6 @@ app.use(session({
 }));
 
 app.use("/api/users", userRoutes);
-app.use("/api/notes", requiresAuth, notesRoutes);
 app.use("/api/requests", requiresAuth, requestsRoutes);
 app.use("/api/patients", requiresAuth, patientsRoutes);
 app.use('/upload', uploadRoute);

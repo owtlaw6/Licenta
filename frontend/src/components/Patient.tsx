@@ -20,19 +20,18 @@ interface PatientProps {
     className?: string,
     caller: string,
     displayListGrid: string,
+    doctorsAll: Doctor[],
 }
 
-const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, onExpandData, className, caller, displayListGrid }: PatientProps) => {
+const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, onExpandData, className, caller, displayListGrid, doctorsAll }: PatientProps) => {
     const {
         name,
         cnp,
-        doctors,
+        doctors = [],
         description,
         createdAt,
         updatedAt
     } = patient;
-
-    const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
 
     const [showFileUploadDialog, setShowFileUploadDialog] = useState(false);
 
@@ -47,14 +46,6 @@ const Patient = ({patient, onPatientClicked, onDeletePatientClicked, onExpand, o
         setFilesUploaded(files);
         setShowFileUploadDialog(false);
     };
-
-    useEffect(() => {
-        const getDoctors = async () => {
-            const fetchedDoctors = await fetchDoctors();
-            setDoctorsAll(fetchedDoctors);
-        };
-        getDoctors();
-    }, []);
 
     let doctorsNames: string[];
     doctorsNames = [];

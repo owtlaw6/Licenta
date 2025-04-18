@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from "react-bootstrap";
 import styles from "../styles/NotesPage.module.css";
 import styleButtons from "../styles/utils.module.css";
+import { fetchDoctors, Doctor } from "../network/general_api";
 import Patient from './Patient';
 import { Patient as PatientModel } from '../models/patient';
 import AddEditPatientDialog from './AddEditPatientDialog';
@@ -49,6 +50,31 @@ const DoctorPageLoggedInView = () => {
         }
         loadPatients();
     }, []);
+
+    const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+        
+        useEffect(() => {
+            async function loadData() {
+                try {
+                    setShowPatientsLoadingError(false);
+                    setPatientsLoading(true);
+        
+                    const [fetchedPatients, fetchedDoctors] = await Promise.all([
+                        PatientsApi.fetchPatients(),
+                        fetchDoctors()
+                    ]);
+        
+                    setPatients(fetchedPatients);
+                    setDoctorsAll(fetchedDoctors);
+                } catch (error) {
+                    console.error(error);
+                    setShowPatientsLoadingError(true);
+                } finally {
+                    setPatientsLoading(false);
+                }
+            }
+            loadData();
+        }, []);
 
     async function deletePatient(patient: PatientModel) {
         try {
@@ -128,6 +154,7 @@ const DoctorPageLoggedInView = () => {
                                 onDeletePatientClicked={deletePatient}
                                 onExpand={expandPatientCT}
                                 onExpandData={expandPatientData}
+                                doctorsAll={doctorsAll}
                             />
                         </Col>
                     ))}
@@ -167,6 +194,7 @@ const patientsList = <>
                             onDeletePatientClicked={deletePatient}
                             onExpand={expandPatientCT}
                             onExpandData={expandPatientData}
+                            doctorsAll={doctorsAll}
                         />
                     ))}
                 </tbody>

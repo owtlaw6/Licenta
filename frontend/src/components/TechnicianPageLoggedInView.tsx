@@ -4,6 +4,7 @@ import { Patient as PatientModel } from '../models/patient';
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
 import AddEditPatientDialog from "./AddEditPatientDialog";
+import { fetchDoctors, Doctor } from "../network/general_api";
 import Patient from './Patient';
 import { MdSearch } from "react-icons/md";
 
@@ -35,6 +36,31 @@ const TechnicianPageLoggedInView = () => {
         loadPatient();
     }, []);
 
+    const [doctorsAll, setDoctorsAll] = useState<Doctor[]>([]);
+    
+    useEffect(() => {
+        async function loadData() {
+            try {
+                setShowPatientsLoadingError(false);
+                setPatientsLoading(true);
+    
+                const [fetchedPatients, fetchedDoctors] = await Promise.all([
+                    PatientsApi.fetchPatients(),
+                    fetchDoctors()
+                ]);
+    
+                setPatients(fetchedPatients);
+                setDoctorsAll(fetchedDoctors);
+            } catch (error) {
+                console.error(error);
+                setShowPatientsLoadingError(true);
+            } finally {
+                setPatientsLoading(false);
+            }
+        }
+        loadData();
+    }, []);
+
     async function deletePatient(patient: PatientModel) { }
 
     const patientsGrid =
@@ -48,6 +74,7 @@ const TechnicianPageLoggedInView = () => {
                             className={styles.note}
                             onPatientClicked={setPatientToEdit}
                             onDeletePatientClicked={deletePatient}
+                            doctorsAll={doctorsAll}
                         />
                     </Col>
                 ))}
