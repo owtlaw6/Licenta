@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MdArrowBack } from "react-icons/md";
-import { Patient as PatientModel } from "../models/patient";
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import { Button } from 'react-bootstrap';
 import { FaPlus, FaSort } from "react-icons/fa";
 import styleUtils from "../styles/utils.module.css";

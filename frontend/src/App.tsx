@@ -6,7 +6,7 @@ import LoginModal from './components/LoginModal';
 import NavBar from './components/NavBar';
 import SignUpModal from './components/SignUpModal';
 import { User } from './models/user';
-import * as NotesApi from "./network/notes_api";
+import * as SessionsApi from "./network/sessions_api";
 import NotesPage from './pages/NotesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPage from './pages/PrivacyPage';
@@ -22,7 +22,7 @@ function App() {
 	useEffect(() => {
 		async function fetchLoggedInUser() {
 			try {
-				const user = await NotesApi.getLoggedInUser();
+				const user = await SessionsApi.getLoggedInUser();
 				setLoggedInUser(user);
 			} catch (error) {
 				console.error(error);

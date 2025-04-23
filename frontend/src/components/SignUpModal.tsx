@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { User } from "../models/user";
-import { SignUpCredentials } from "../network/notes_api";
-import * as NotesApi from "../network/notes_api";
+import { SignUpCredentials } from "../network/sessions_api";
+import * as SessionsApi from "../network/sessions_api";
 import { Alert, Button, Form, Modal, Row } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
 import styleUtils from "../styles/utils.module.css";
@@ -25,7 +25,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
         try {
             credentials.role = selectedRole;
 
-            const newUser = await NotesApi.signUp(credentials);
+            const newUser = await SessionsApi.signUp(credentials);
             onSignUpSuccessful(newUser);
         } catch (error) {
             if (error instanceof ConflictError) {

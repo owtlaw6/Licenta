@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Col, Row, Spinner } from "react-bootstrap";
-import { Patient as PatientModel } from '../models/patient';
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import * as PatientsApi from "../network/patients_api";
 import styles from "../styles/NotesPage.module.css";
 import AddEditPatientDialog from "./AddEditPatientDialog";

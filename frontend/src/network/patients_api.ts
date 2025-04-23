@@ -1,6 +1,5 @@
 import { ConflictError, UnauthorizedError } from "../errors/http_errors";
-import { Patient } from "../models/patient";
-import { User } from "../models/user";
+import { PatientWithoutHemoleucograma as Patient } from "../models/patient";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
     const response = await fetch(input, init);
@@ -17,11 +16,6 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
             throw Error("Request failed with status: " + response.status + " message: " + errorMessage);
         }
     }
-}
-
-export async function getLoggedInUser(): Promise<User> {
-    const response = await fetchData("/api/users", { method: "GET" });
-    return response.json();
 }
 
 export async function fetchPatients(): Promise<Patient[]> {

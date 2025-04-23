@@ -18,41 +18,48 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
     }
 }
 
-export async function fetchUsers(): Promise<User[]> {
-    const response = await fetchData("/api/users/users", { method: "GET" });
+export async function getLoggedInUser(): Promise<User> {
+    const response = await fetchData("/api/users", { method: "GET" });
     return response.json();
 }
 
-export interface UserInput {
+export interface SignUpCredentials {
     username: string,
     email: string,
+    password: string,
     role: string,
 }
 
-export async function createUser(user: UserInput): Promise<User> {
-    const response = await fetchData("/api/users",
+export async function signUp(credentials: SignUpCredentials): Promise<User> {
+    const response = await fetchData("/api/users/signup",
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(user),
+            body: JSON.stringify(credentials),
         });
     return response.json();
 }
 
-export async function updateUser(userId: string, user: UserInput): Promise<User> {
-    const response = await fetchData("/api/users/" + userId,
+export interface LoginCredentials {
+    username: string,
+    password: string,
+    role: string,
+}
+
+export async function login(credentials: LoginCredentials): Promise<User> {
+    const response = await fetchData("/api/users/login",
         {
-            method: "PATCH",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(user),
+            body: JSON.stringify(credentials),
         });
     return response.json();
 }
 
-export async function deleteUser(userId: string) {
-    await fetchData("/api/users/" + userId, { method: "DELETE" });
+export async function logout() {
+    await fetchData("/api/users/logout", { method: "POST" });
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from "react-bootstrap";
 import { FaPlus, FaSort } from "react-icons/fa";
-import { Patient as PatientModel } from '../models/patient';
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import * as PatientsApi from "../network/patients_api";
 import { fetchDoctors, Doctor } from "../network/general_api";
 import styles from "../styles/NotesPage.module.css";
@@ -100,7 +100,16 @@ const AssistantPageLoggedIn = () => {
         setSortConfig({ key, direction });
     }
 
-    async function deletePatient(patient: PatientModel) { }
+    //async function deletePatient(patient: PatientModel) { }
+    async function deletePatient(patient: PatientModel) {
+        try {
+            await PatientsApi.deletePatient(patient._id);
+            setPatients(patients.filter(existingPatient => existingPatient._id !== patient._id));
+        } catch (error) {
+            console.error(error);
+            alert(error);
+        }
+    }
 
     const patientsGrid =
         <Row xs={1} md={2} xl={3} className={`g-4 ${styles.notesGrid}`}>

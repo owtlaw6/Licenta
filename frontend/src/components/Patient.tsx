@@ -2,7 +2,7 @@ import styles from "../styles/Note.module.css";
 import stylesButton from "../styles/adminButtons.module.css";
 import styleUtils from "../styles/utils.module.css";
 import { Button, Card } from "react-bootstrap";
-import { Patient as PatientModel } from "../models/patient";
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import { formatDate } from "../utils/formatDate";
 import { MdDelete } from "react-icons/md";
 import React, { useState, useEffect } from "react";

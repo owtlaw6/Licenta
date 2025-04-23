@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import { Patient as PatientModel } from "../models/patient";
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import axios from "axios";
 import Table from "react-bootstrap/Table";
 import { MdArrowBack } from "react-icons/md";
+import * as PatientsApi from "../network/patients_api"
 
 interface ComparePatientsViewProps {
   goBack: () => void;
@@ -32,7 +33,9 @@ const ComparePatientsView: React.FC<ComparePatientsViewProps> = ({ goBack, patie
       for (const patientId of selectedPatients) {
         try {
           const response = await axios.get(`/api/patients/${patientId}`);
+          //const response = await PatientsApi.getPatient(patientId);
           fetchedData[patientId] = response.data;
+          //fetchedData[patientId] = response;
         } catch (error) {
           console.error("Error fetching patient data:", error);
         }

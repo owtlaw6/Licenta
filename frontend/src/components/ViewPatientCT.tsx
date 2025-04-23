@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdArrowBack } from "react-icons/md";
-import { Patient as PatientModel } from "../models/patient";
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import stylePatient from "../styles/ViewPatient.module.css";
 
 interface ViewPatientProps {

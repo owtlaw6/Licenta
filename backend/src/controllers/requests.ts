@@ -64,7 +64,7 @@ export const denyRequest: RequestHandler = async (req, res, next) => {
         const request = await RequestModel.findById(requestId).exec();
 
         if (!request) {
-            throw createHttpError(404, "Note not found");
+            throw createHttpError(404, "Request not found");
         }
 
         await request.deleteOne();

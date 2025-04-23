@@ -1,6 +1,6 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { Patient } from "../models/patient";
+import { PatientWithoutHemoleucograma as Patient } from "../models/patient";
 import TextInputField from "./form/TextInputField";
 import * as PatientsApi from "../network/patients_api"
 import DoctorSelect from "./DoctorSelect";

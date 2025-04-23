@@ -4,7 +4,7 @@ import styles from "../styles/NotesPage.module.css";
 import styleButtons from "../styles/utils.module.css";
 import { fetchDoctors, Doctor } from "../network/general_api";
 import Patient from './Patient';
-import { Patient as PatientModel } from '../models/patient';
+import { PatientWithoutHemoleucograma as PatientModel } from "../models/patient";
 import AddEditPatientDialog from './AddEditPatientDialog';
 import * as PatientsApi from "../network/patients_api";
 import { MdSearch } from "react-icons/md";
