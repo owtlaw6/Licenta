@@ -1,5 +1,5 @@
 import { ConflictError, UnauthorizedError } from "../errors/http_errors";
-import { PatientWithoutHemoleucograma as Patient } from "../models/patient";
+import { PatientWithoutHemoleucograma, PatientWithHemoleucograma } from "../models/patient";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
     const response = await fetch(input, init);
@@ -18,7 +18,7 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
     }
 }
 
-export async function fetchPatients(): Promise<Patient[]> {
+export async function fetchPatients(): Promise<PatientWithoutHemoleucograma[]> {
     const response = await fetchData("/api/patients", { method: "GET" });
     return response.json();
 }
@@ -30,7 +30,7 @@ export interface PatientInput {
     description: string,
 }
 
-export async function createPatient(patient: PatientInput): Promise<Patient> {
+export async function createPatient(patient: PatientInput): Promise<PatientWithoutHemoleucograma> {
     const response = await fetchData("/api/patients",
         {
             method: "POST",
@@ -42,7 +42,7 @@ export async function createPatient(patient: PatientInput): Promise<Patient> {
     return response.json();
 }
 
-export async function updatePatient(patientId: string, patient: PatientInput): Promise<Patient> {
+export async function updatePatient(patientId: string, patient: PatientInput): Promise<PatientWithoutHemoleucograma> {
     const response = await fetchData("/api/patients/" + patientId,
         {
             method: "PATCH",
@@ -58,7 +58,12 @@ export async function deletePatient(patientId: string) {
     await fetchData("/api/patients/" + patientId, { method: "DELETE" });
 }
 
-export async function getPatient(patientId: string): Promise<Patient> {
+export async function getPatientWithoutHemoleucograma(patientId: string): Promise<PatientWithoutHemoleucograma> {
+    const response = await fetchData("/api/patients/" + patientId, { method: "GET" });
+    return response.json();
+}
+
+export async function getPatientWithHemoleucograma(patientId: string): Promise<PatientWithHemoleucograma> {
     const response = await fetchData("/api/patients/" + patientId, { method: "GET" });
     return response.json();
 }

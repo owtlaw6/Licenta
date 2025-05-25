@@ -88,7 +88,7 @@ const DoctorPageLoggedInView = () => {
 
     async function expandPatientCT(patient: PatientModel) { 
         try {
-            await PatientsApi.getPatient(patient._id);
+            await PatientsApi.getPatientWithoutHemoleucograma(patient._id);
             setPage("expandedViewCT");
             setPatientToView(patient);
         } catch (error) {
@@ -99,7 +99,7 @@ const DoctorPageLoggedInView = () => {
 
     async function expandPatientData(patient: PatientModel) { 
         try {
-            await PatientsApi.getPatient(patient._id);
+            await PatientsApi.getPatientWithHemoleucograma(patient._id);
             setPage("expandedViewData");
             setPatientToView(patient);
         } catch (error) {

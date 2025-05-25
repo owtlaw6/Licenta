@@ -100,7 +100,6 @@ const AssistantPageLoggedIn = () => {
         setSortConfig({ key, direction });
     }
 
-    //async function deletePatient(patient: PatientModel) { }
     async function deletePatient(patient: PatientModel) {
         try {
             await PatientsApi.deletePatient(patient._id);
