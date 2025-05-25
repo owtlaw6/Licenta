@@ -10,6 +10,7 @@ import axios from "axios";
 import Table from 'react-bootstrap/Table';
 import Plot from 'react-plotly.js';
 import Select, { components } from 'react-select';
+import ComparePatientData from './ComparePatientData';
 
 export interface PatientData {
     '(WBC) Leucocite': string;
@@ -63,11 +64,11 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
         setShowFileUploadDialog(true);
     };
 
-    const handleFilesUploaded = (files: File[]) => {
-        setFilesUploaded(files);
-        setShowFileUploadDialog(false);
-        goBack();
-    };
+    // const handleFilesUploaded = (files: File[]) => {
+    //     setFilesUploaded(files);
+    //     setShowFileUploadDialog(false);
+    //     goBack();
+    // };
 
     const [patientData, setPatientData] = useState<PatientNoduleData | null>(null);
 
@@ -145,9 +146,27 @@ const ViewPatientData: React.FC<ViewPatientProps> = ({ patient, goBack }) => {
     const MultiValue = (props: any) => {
         return null;
     };
+
+    const [showComparison, setShowComparison] = useState(false);
+
+    const handleFilesUploaded = (files: File[]) => {
+        setFilesUploaded(files);
+        setShowFileUploadDialog(false);
+        setShowComparison(true);
+    };
     
 return (
     <>
+        {showComparison && (
+          <ComparePatientData
+            cnp={cnp}
+            goBack={() => {
+              setShowComparison(false);
+            }}
+          />
+        )}
+        {!showComparison && (
+        <>
         {showFileUploadDialog &&
             <FileUploadDialog caller = "PDF"
                 onDismiss={() => setShowFileUploadDialog(false)} 
@@ -272,6 +291,8 @@ return (
         </Table>
         <br/>
     </>
+    )}
+  </>
   );
 };
 

@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+.column {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+.column h5 {
+  margin: 0;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  background: #f0f0f0;
+}
+.pre {
+  padding: 0.5rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+  font-family: Menlo, monospace;
+}

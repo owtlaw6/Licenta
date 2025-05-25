@@ -10,6 +10,8 @@ import session from "express-session";
 import env from "./util/validateEnv";
 import MongoStore from "connect-mongo";
 import { requiresAuth } from "./middleware/auth";
+import path from 'path';
+import filesRouter from './routes/files';
 
 
 const app = express();
@@ -35,6 +37,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/requests", requiresAuth, requestsRoutes);
 app.use("/api/patients", requiresAuth, patientsRoutes);
 app.use('/upload', uploadRoute);
+app.use('/files', filesRouter);
 
 app.use((req, res, next) => {
     next(createHttpError(404, "Endpoint not found!"));
